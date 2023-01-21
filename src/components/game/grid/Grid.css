@@ -1,0 +1,23 @@
+.grid {
+  border: solid 1px #000;
+  width: 720px;
+  height: 720px;
+
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  box-sizing: border-box;
+}
+.grid .cell {
+  border: solid 1px #000;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  width: 120px;
+}
+
+.cell.hovered {
+  box-shadow: inset 0 0 5px 5px #89a6ff;
+}

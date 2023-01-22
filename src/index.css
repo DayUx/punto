@@ -1,13 +1,88 @@
+:root {
+  --rouge: #ed1d23;
+  --bleu: #00b9f1;
+  --vert: #70be44;
+  --jaune: #f9ae19;
+  --bg-dark: #231f20;
+  --bg-light: #f5f5f5;
+  --shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.font-rouge {
+  color: var(--rouge) !important;
+}
+.font-jaune {
+  color: var(--jaune) !important;
+}
+.font-bleu {
+  color: var(--bleu) !important;
+}
+.font-vert {
+  color: var(--vert) !important;
+}
+.border-rouge {
+  border-color: var(--rouge) !important;
+}
+.border-jaune {
+  border-color: var(--jaune) !important;
+}
+.border-bleu {
+  border-color: var(--bleu) !important;
+}
+.border-vert {
+  border-color: var(--vert) !important;
+}
+.bg-rouge {
+  background-color: var(--rouge) !important;
+}
+.bg-jaune {
+  background-color: var(--jaune) !important;
+}
+.bg-bleu {
+  background-color: var(--bleu) !important;
+}
+.bg-vert {
+  background-color: var(--vert) !important;
+}
+
 body {
+  background: var(--bg-dark);
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.2) 1.3px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+  background-position: center;
+  animation: background-move 30s ease-in-out infinite;
+}
+
+@keyframes background-move {
+  0% {
+    background-size: 20px 20px;
+  }
+  50% {
+    background-size: 30px 30px;
+  }
+  100% {
+    background-size: 20px 20px;
+  }
+}
+
+@font-face {
+  font-family: "Universalis";
+  src: url("./assets/fonts/universalis.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: Universalis, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }

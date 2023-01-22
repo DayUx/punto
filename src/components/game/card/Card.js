@@ -1,8 +1,15 @@
 import "./Card.css";
-import { createRef } from "react";
+import { createRef, forwardRef, useImperativeHandle } from "react";
+import Logo from "../../base/logo/Logo";
 
-const Card = ({ color, value }) => {
-  const ref = createRef();
+const Card = forwardRef(({ color, value, id }, ref) => {
+  const cardRef = createRef();
+
+  useImperativeHandle(ref, () => ({
+    turnCard: () => {
+      cardRef.current.classList.toggle("turned");
+    },
+  }));
 
   const diceFace = {
     1: [
@@ -52,19 +59,23 @@ const Card = ({ color, value }) => {
     ],
   };
 
+  const turnCard = () => {
+    cardRef.current.classList.toggle("turned");
+  };
+
   const onDragEnter = (e, position) => {
     console.log(e.target.innerhtml);
   };
 
   return (
     <div
-      ref={ref}
+      ref={cardRef}
       className={`card ${color} value-${value}`}
-      id={`card${value}${color}`}
+      id={id}
       value={value}
       color={color}
       onDragStart={function (e) {
-        if (ref.current.draggable) {
+        if (cardRef.current.draggable) {
           e.dataTransfer.setData("id", `card${value}${color}`);
         } else {
           e.preventDefault();
@@ -72,21 +83,28 @@ const Card = ({ color, value }) => {
       }}
       draggable
     >
-      {diceFace[value].map((row, rowIndex) => {
-        return (
-          <>
-            {row.map((cell, cellIndex) => {
-              return (
-                <div
-                  className={`dot ${cell ? "filled" : ""}`}
-                  key={cellIndex}
-                ></div>
-              );
-            })}
-          </>
-        );
-      })}
+      <div className={"content"}>
+        <div className={"front"}>
+          {diceFace[value].map((row, rowIndex) => {
+            return (
+              <>
+                {row.map((cell, cellIndex) => {
+                  return (
+                    <div
+                      className={`dot ${cell ? "filled" : ""}`}
+                      key={cellIndex}
+                    ></div>
+                  );
+                })}
+              </>
+            );
+          })}
+        </div>
+        <div className={"back"}>
+          <Logo size={30} />
+        </div>
+      </div>
     </div>
   );
-};
+});
 export default Card;

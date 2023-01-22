@@ -2,9 +2,7 @@ import "./Grid.css";
 import { useEffect, useState } from "react";
 
 const Grid = ({ size }) => {
-  const [grid, setGrid] = useState(null);
-
-  const emptyGrid = () => {
+  const [grid, setGrid] = useState(() => {
     let grid = [];
     for (let i = 0; i < size; i++) {
       grid.push([]);
@@ -12,16 +10,8 @@ const Grid = ({ size }) => {
         grid[i].push({ empty: true });
       }
     }
-    setGrid(grid);
-  };
-
-  useEffect(() => {
-    if (grid === null) {
-      emptyGrid();
-    }
-  }, []);
-
-  emptyGrid();
+    return grid;
+  });
 
   return (
     <div className={`grid size-${size}`}>
@@ -33,12 +23,16 @@ const Grid = ({ size }) => {
                 <div
                   className={`cell row-${rowIndex} column-${columnIndex}`}
                   onDragOver={function (e) {
+                    console.log(e.target);
                     e.target.classList.add("hovered");
                     e.stopPropagation();
                     e.preventDefault();
                   }}
                   onDragLeave={function (e) {
                     e.target.classList.remove("hovered");
+                  }}
+                  onDragStart={function (e) {
+                    e.preventDefault();
                   }}
                   onDrop={function (e) {
                     e.target.classList.remove("hovered");

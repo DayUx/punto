@@ -76,7 +76,7 @@ const Card = forwardRef(({ color, value, id }, ref) => {
       color={color}
       onDragStart={function (e) {
         if (cardRef.current.draggable) {
-          e.dataTransfer.setData("id", `card${value}${color}`);
+          e.dataTransfer.setData("id", id);
         } else {
           e.preventDefault();
         }

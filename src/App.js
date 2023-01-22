@@ -7,11 +7,10 @@ import Header from "./components/base/header/Header";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import LogIn from "./components/page/login/LogIn";
 import Register from "./components/page/register/Register";
-import { createRef } from "react";
+import { createRef, useEffect, useState } from "react";
 import Loader from "./components/base/loader/Loader";
 import { Toaster } from "react-hot-toast";
 import Music from "./components/base/music/Music";
-import Sound from "use-sound";
 
 function App() {
   const navigate = useNavigate();
@@ -21,8 +20,8 @@ function App() {
   return (
     <div className="App">
       <Toaster />
-      <Music />
       <Header />
+      <Music> </Music>
       <Routes>
         <Route
           path={"/"}

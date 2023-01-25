@@ -1,0 +1,68 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 100px);
+  width: 100%;
+  color: #fff;
+  padding: 50px 50px 100px 50px;
+  box-sizing: border-box;
+}
+
+.home .home-content {
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 500px;
+  margin: 50px;
+  height: 100%;
+  display: flex;
+  gap: 50px;
+}
+
+.home .gameList {
+  width: 100%;
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 20px;
+  box-sizing: border-box;
+  border-radius: 50px;
+  box-shadow: var(--shadow);
+  overflow-y: scroll;
+}
+.home .gameList::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.home .createGame {
+  width: 100%;
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 20px;
+  box-sizing: border-box;
+  border-radius: 50px;
+  box-shadow: var(--shadow);
+}
+
+.home .createGame .gameName {
+  width: 100%;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  border: 3px solid #fff;
+  border-radius: 100px;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bolder;
+  outline: none;
+}

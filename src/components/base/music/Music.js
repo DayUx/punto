@@ -1,9 +1,8 @@
-import fiatPunto from "../../../assets/music/fiat_punto.mp3";
 import { useEffect, useState } from "react";
 import music from "../../../assets/music/fiat_punto.mp3";
-import Button from "../button/Button";
 import { MdOutlineMusicNote, MdOutlineMusicOff } from "react-icons/md";
 import IconButton from "../button/IconButton";
+import "./Music.css";
 const Music = () => {
   let [audio, SetAudio] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);

@@ -1,0 +1,23 @@
+.cards {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  height: fit-content;
+  height: 120px;
+}
+
+.cards .cards-card {
+  flex: 1;
+  transition: 0.5s;
+}
+
+.cards .cards-card:hover {
+  transform: translate(0, -50%);
+}
+.cards .cards-card.disable:hover {
+  transform: none;
+}
+
+.cards .cards-card:last-child {
+  width: 120px;
+}

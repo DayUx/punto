@@ -1,11 +1,9 @@
 .grid {
   border: solid 1px var(--bg-dark);
-  width: 780px;
-  height: 780px;
-
+  width: var(--grid-width);
+  height: var(--grid-width);
   background: #fff;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   box-sizing: border-box;
 }
 .grid .cell {
@@ -19,6 +17,12 @@
   width: 120px;
   box-shadow: 0 0 0 0px var(--bg-dark);
   transition: 0.2s;
+  padding: 2%;
+}
+
+.grid .cell .card {
+  width: 100%;
+  height: 100%;
 }
 
 .cell.hovered {

@@ -1,0 +1,84 @@
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      'name',
+      'description',
+      'image'
+    ],
+    properties: {
+      nom: {
+        bsonType: 'string'
+      },
+      description: {
+        bsonType: 'string'
+      },
+      image: {
+        bsonType: 'string'
+      },
+      messages: {
+        bsonType: 'array',
+        items: {
+          bsonType: 'object',
+          required: [
+            'date',
+            'message',
+            'user_id'
+          ],
+          properties: {
+            date: {
+              bsonType: 'string'
+            },
+            message: {
+              bsonType: 'string'
+            },
+            user_id: {
+              bsonType: 'string'
+            }
+          }
+        }
+      },
+      users: {
+        bsonType: 'array',
+        items: {
+          bsonType: 'object',
+          required: [
+            'user_id'
+          ],
+          properties: {
+            user_id: {
+              bsonType: 'string'
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      'email',
+      'password',
+      'username',
+    ],
+    properties: {
+      username: {
+        bsonType: 'string'
+      },
+
+      email: {
+        bsonType: 'string'
+      },
+      password: {
+        bsonType: 'string'
+      },
+
+    }
+  }
+}

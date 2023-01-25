@@ -14,13 +14,23 @@ const Grid = ({ size }) => {
   });
 
   return (
-    <div className={`grid size-${size}`}>
+    <div
+      className={`grid size-${size}`}
+      style={{
+        gridTemplateColumns: `repeat(${size}, 1fr)`,
+      }}
+    >
       {Array.from(Array(size).keys()).map((row, rowIndex) => {
         return (
           <>
             {Array.from(Array(size).keys()).map((column, columnIndex) => {
               return (
                 <div
+                  key={`${rowIndex}-${columnIndex}`}
+                  style={{
+                    width: `calc(var(--grid-width) / ${size})`,
+                    height: `calc(var(--grid-width) / ${size})`,
+                  }}
                   className={`cell row-${rowIndex} column-${columnIndex}`}
                   onDragOver={function (e) {
                     console.log(e.target);

@@ -32,15 +32,20 @@ const Register = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(fields),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        toast.dismiss(loading);
-        toast.success("You are now registered");
-        navigate("/");
-        console.log(data);
-      })
-      .catch((err) => console.log(err));
+    }).then((res) => {
+      const ok = res.ok;
+      res.json().then((json) => {
+        if (ok) {
+          toast.dismiss(loading);
+          toast.success("You are now registered and logged in");
+          localStorage.setItem("user", json.user);
+          navigate("/");
+        } else {
+          toast.dismiss(loading);
+          toast.error(json.message);
+        }
+      });
+    });
   };
 
   return (

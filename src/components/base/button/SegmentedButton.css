@@ -1,0 +1,32 @@
+.segmentedButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.segmentedButton .segmentedButtonOption {
+  padding: 7px 15px 4px 15px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  border-right: 0px;
+  transition: 0.5s ease;
+}
+.segmentedButton .segmentedButtonOption:last-child {
+  border-right: 2px solid #fff;
+  border-radius: 0px 25px 25px 0px;
+}
+
+.segmentedButton .segmentedButtonOption:first-child {
+  border-radius: 25px 0px 0px 25px;
+}
+
+.segmentedButton .segmentedButtonOption.selected {
+  background: rgb(255, 255, 255);
+  color: var(--bg-dark);
+}
+
+.segmentedButton .segmentedButtonOption:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.segmentedButton .segmentedButtonOption.selected:hover {
+  background: rgba(255, 255, 255, 0.9);
+}

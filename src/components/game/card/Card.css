@@ -1,13 +1,14 @@
 .card {
   width: 120px;
   height: 120px;
+  box-sizing: border-box;
 }
 
 .card .dot {
   background: #fff;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 50%;
+  height: 50%;
   margin: auto;
   visibility: hidden;
 }
@@ -43,7 +44,7 @@
   transform-style: preserve-3d;
 }
 
-.card.turned .content {
+.turned .content {
   transform: rotateY(180deg);
   transition: transform 0.5s;
 }

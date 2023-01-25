@@ -2,7 +2,7 @@ import "./Card.css";
 import { createRef, forwardRef, useImperativeHandle } from "react";
 import Logo from "../../base/logo/Logo";
 
-const Card = forwardRef(({ color, value, id }, ref) => {
+const Card = forwardRef(({ color, value, id, disable }, ref) => {
   const cardRef = createRef();
 
   useImperativeHandle(ref, () => ({
@@ -67,15 +67,31 @@ const Card = forwardRef(({ color, value, id }, ref) => {
     console.log(e.target.innerhtml);
   };
 
+  const isColorValid = (color) => {
+    return (
+      color === "rouge" ||
+      color === "bleu" ||
+      color === "vert" ||
+      color === "jaune"
+    );
+  };
+
   return (
     <div
       ref={cardRef}
-      className={`card ${color} value-${value}`}
+      className={`card ${color} value-${value} ${
+        !value || value < 0 || value > 9 ? "turned" : ""
+      }`}
       id={id}
       value={value}
       color={color}
       onDragStart={function (e) {
-        if (cardRef.current.draggable) {
+        if (
+          !disable &&
+          cardRef.current.draggable &&
+          value &&
+          isColorValid(color)
+        ) {
           e.dataTransfer.setData("id", id);
         } else {
           e.preventDefault();
@@ -85,20 +101,24 @@ const Card = forwardRef(({ color, value, id }, ref) => {
     >
       <div className={"content"}>
         <div className={"front"}>
-          {diceFace[value].map((row, rowIndex) => {
-            return (
-              <>
-                {row.map((cell, cellIndex) => {
-                  return (
-                    <div
-                      className={`dot ${cell ? "filled" : ""}`}
-                      key={cellIndex}
-                    ></div>
-                  );
-                })}
-              </>
-            );
-          })}
+          {value && isColorValid(color) ? (
+            diceFace[value].map((row, rowIndex) => {
+              return (
+                <>
+                  {row.map((cell, cellIndex) => {
+                    return (
+                      <div
+                        className={`dot ${cell ? "filled" : ""}`}
+                        key={cellIndex}
+                      ></div>
+                    );
+                  })}
+                </>
+              );
+            })
+          ) : (
+            <></>
+          )}
         </div>
         <div className={"back"}>
           <Logo size={30} />

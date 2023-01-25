@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { APIRoutes } from "../../../utils/APIRoutes";
 import { useState } from "react";
+import Grid from "../../game/grid/Grid";
+import Card from "../../game/card/Card";
 const LogIn = () => {
   const navigate = useNavigate();
   const [fields, setFields] = useState({
@@ -29,18 +31,20 @@ const LogIn = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(fields),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        toast.dismiss(loading);
-        toast.success("You are now logged in");
-        navigate("/");
-        console.log(data);
-      })
-      .catch((err) => {
-        toast.dismiss(loading);
-        console.log(err);
+    }).then((res) => {
+      const ok = res.ok;
+      res.json().then((json) => {
+        if (ok) {
+          toast.dismiss(loading);
+          toast.success("You are now logged in");
+          localStorage.setItem("user", json.user);
+          navigate("/");
+        } else {
+          toast.dismiss(loading);
+          toast.error(json.message);
+        }
       });
+    });
   };
 
   return (

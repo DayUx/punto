@@ -70,6 +70,10 @@ const Home = () => {
           });
         } else {
           toast.error(data.message);
+          if (response.status === 401) {
+            localStorage.removeItem("user");
+            navigate("/login");
+          }
         }
       });
     });

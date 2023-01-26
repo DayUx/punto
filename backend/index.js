@@ -38,6 +38,7 @@ const io = socket(server, {
 });
 
 global.io = io;
+global.games = [];
 io.on("connection", (socket) => {
   socket.on("gamelist", (data) => {
     try {
@@ -56,6 +57,34 @@ io.on("connection", (socket) => {
       if (decoded) {
         console.log(`${decoded.username} joined ${data.gameId}`);
         socket.join(data.gameId);
+      }
+    } catch (e) {}
+  });
+  socket.on("playGame", (data) => {
+    try {
+      const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
+      if (decoded) {
+        if (global.games[data.id]) {
+          socket.join(data.id);
+          socket.join(decoded.id);
+          console.log(`${decoded.username} play ${data.id}`);
+          global.games[data.id].setUserOk(decoded.id);
+        }
+      }
+    } catch (e) {}
+  });
+  socket.on("placeCard", (data) => {
+    try {
+      const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
+      if (decoded) {
+        if (global.games[data.id]) {
+          global.games[data.id].checkPlay(
+            decoded.id,
+            data.card,
+            data.x,
+            data.y
+          );
+        }
       }
     } catch (e) {}
   });

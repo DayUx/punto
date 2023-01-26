@@ -2,6 +2,7 @@ const User = require("../model/UserModel");
 const Game = require("../model/GameModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const GameClass = require("./GameClass");
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -80,9 +81,10 @@ module.exports.newGame = async (req, res, next) => {
   try {
     const { name, maxPlayers, numberPlayers } = req.body;
 
-    const grid = Array(6)
+    const grid = Array(11)
       .fill()
-      .map(() => Array(6).fill({ empty: true }));
+      .map(() => Array(11).fill({ empty: true }));
+    grid[5][5] = { empty: true, placable: true };
 
     const game = await Game.create({
       name: name,
@@ -103,11 +105,12 @@ module.exports.newGame = async (req, res, next) => {
 module.exports.joinGame = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
+    console.log("JOIN GAME", token);
     const userJson = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = req.body;
     const game = await Game.findOne({ _id: id });
     if (!game) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Game not found",
       });
     }
@@ -119,7 +122,7 @@ module.exports.joinGame = async (req, res, next) => {
     }
 
     if (!found && game.players.length >= game.maxPlayers) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Game is full",
       });
     }
@@ -139,7 +142,7 @@ module.exports.joinGame = async (req, res, next) => {
       if (start) {
         global.io.sockets.emit("startGame", game);
         global.io.sockets.emit("removeGame", game);
-
+        global.games[game._id.toString()] = new GameClass(game);
         console.log("GAME START", game._id.toString());
         return res.status(200).json({ game: game });
         return;
@@ -150,6 +153,7 @@ module.exports.joinGame = async (req, res, next) => {
 
     return res.status(200).json({ game: game });
   } catch (e) {
+    res.status(401).json({ message: "Token is invalid, please reconnect" });
     next(e);
   }
 };
@@ -165,6 +169,7 @@ module.exports.getGames = async (req, res, next) => {
     });
     return res.status(200).json({ games: games });
   } catch (e) {
+    res.status(401).json({ message: "Token is invalid, please reconnect" });
     next(e);
   }
 };

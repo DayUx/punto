@@ -1,9 +1,14 @@
 .cards {
   display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  height: fit-content;
-  height: 120px;
+  flex-wrap: wrap;
+  width: calc(100% - 100px);
+  max-height: 240px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  gap: 10px;
+  padding: 10px;
+  margin: 0 50px;
+  box-sizing: border-box;
 }
 
 .cards .cards-card {
@@ -12,7 +17,7 @@
 }
 
 .cards .cards-card:hover {
-  transform: translate(0, -50%);
+  transform: scale(1.1);
 }
 .cards .cards-card.disable:hover {
   transform: none;
@@ -20,4 +25,12 @@
 
 .cards .cards-card:last-child {
   width: 120px;
+}
+
+.cards::-webkit-scrollbar {
+  width: 5px;
+}
+.cards::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
 }

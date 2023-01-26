@@ -2,7 +2,7 @@
   border: solid 1px var(--bg-dark);
   width: var(--grid-width);
   height: var(--grid-width);
-  background: #fff;
+  /*background: #fff;*/
   display: grid;
   box-sizing: border-box;
 }
@@ -20,11 +20,16 @@
   padding: 2%;
 }
 
+.grid .cell.placable {
+  border: solid 1px rgba(255, 255, 255, 0.4);
+}
+
 .grid .cell .card {
   width: 100%;
   height: 100%;
 }
 
-.cell.hovered {
-  box-shadow: 0 0 0 5px var(--bg-dark);
+.cell.placable.hovered {
+  box-shadow: 0 0 0 5px #fff;
+  background: transparent;
 }

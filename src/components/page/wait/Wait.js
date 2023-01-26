@@ -33,6 +33,7 @@ const Wait = () => {
       navigate("/home");
     }
 
+    console.log(localStorage.getItem("user"));
     fetch(APIRoutes.joinGame, {
       method: "POST",
       headers: {
@@ -92,6 +93,12 @@ const Wait = () => {
           toast.error(data.message, {
             position: "bottom-center",
           });
+          toast.error(data.message);
+          if (response.status === 401) {
+            localStorage.removeItem("user");
+            navigate("/login");
+            return;
+          }
           navigate("/home");
         }
       });

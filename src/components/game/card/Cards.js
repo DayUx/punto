@@ -1,26 +1,11 @@
 import Card from "./Card";
 import "./Cards.css";
 
-const Cards = ({ cards, onCardClick, draggable, vertical, disable }) => {
+const Cards = ({ cards = [], onCardClick, draggable, vertical, disable }) => {
   return (
-    <div
-      className="cards"
-      style={{
-        flexDirection: vertical ? "column" : "row",
-      }}
-    >
+    <div className="cards">
       {cards.map((card, index) => (
-        <div
-          className={`cards-card ${disable ? " disable" : ""}`}
-          style={
-            vertical
-              ? { height: `calc(100% - 120px / ${cards.length - 1})` }
-              : {
-                  width: `calc(100% - 120px / ${cards.length - 1})`,
-                }
-          }
-          key={index}
-        >
+        <div className={`cards-card ${disable ? " disable" : ""}`} key={index}>
           <Card
             id={disable ? "" : card.id}
             value={card.value}

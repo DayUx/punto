@@ -66,6 +66,19 @@ const Game = () => {
       <Grid
         size={6}
         onCardDrop={(id, x, y) => {
+          console.log(
+            "placeCard : ",
+            "cardId",
+            id,
+            "x",
+            x,
+            "y",
+            y,
+            "token",
+            localStorage.getItem("user"),
+            "gameId",
+            location.state.id
+          );
           socket.current.emit("placeCard", {
             cardId: id,
             x: x,
@@ -77,7 +90,7 @@ const Game = () => {
         grid={grid}
       ></Grid>
 
-      <Cards cards={cards}></Cards>
+      <Card cards={cards}></Card>
     </div>
   );
 };

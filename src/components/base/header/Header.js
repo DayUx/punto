@@ -52,7 +52,13 @@ const Header = () => {
             element={
               <ul>
                 <li>
-                  <Button> Nouvelle partie </Button>
+                  <Button
+                    onClick={() => {
+                      navigate("/home");
+                    }}
+                  >
+                    Accueil
+                  </Button>
                 </li>
                 <li>
                   <Button> Scores </Button>

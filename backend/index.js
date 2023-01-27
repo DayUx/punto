@@ -73,14 +73,15 @@ io.on("connection", (socket) => {
       }
     } catch (e) {}
   });
-  socket.on("placeCard", (data) => {
+  socket.on("placeCard", async (data) => {
     try {
+      console.log("placeCard", data);
       const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
       if (decoded) {
-        if (global.games[data.id]) {
-          global.games[data.id].checkPlay(
+        if (global.games[data.gameId]) {
+          await global.games[data.gameId].checkPlay(
             decoded.id,
-            data.card,
+            data.cardId,
             data.x,
             data.y
           );

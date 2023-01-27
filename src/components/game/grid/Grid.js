@@ -45,7 +45,6 @@ const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
           return (
             <>
               {row.map((column, columnIndex) => {
-                console.log("column", column);
                 return (
                   <div
                     key={`${rowIndex}-${columnIndex}`}

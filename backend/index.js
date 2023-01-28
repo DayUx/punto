@@ -79,12 +79,7 @@ io.on("connection", (socket) => {
       const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
       if (decoded) {
         if (global.games[data.gameId]) {
-          await global.games[data.gameId].checkPlay(
-            decoded.id,
-            data.cardId,
-            data.x,
-            data.y
-          );
+          await global.games[data.gameId].checkPlay(decoded.id, data.x, data.y);
         }
       }
     } catch (e) {}

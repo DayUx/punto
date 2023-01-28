@@ -6,15 +6,14 @@ Grid.prototype.placeCard = function (card, x, y) {
   if (this.grid[y][x].empty || this.grid[y][x].card.value < card.value) {
     this.grid[y][x].card = card;
     this.grid[y][x].empty = false;
-
     return true;
   }
   return false;
 };
 
 Grid.prototype.setPlacable = function (color) {
+  console.log("setPlacable");
   return new Promise(async (resolve, reject) => {
-    console.log("setPlacable");
     for (const row of this.grid) {
       const rowIndex = this.grid.indexOf(row);
       for (const column of row) {
@@ -51,12 +50,25 @@ Grid.prototype.setPlacableAroundCell = function (x, y, color) {
     if (x < this.grid.length - 1) {
       this.grid[y][x + 1].placable = true;
     }
+    if (y > 0 && x < this.grid.length - 1) {
+      this.grid[y - 1][x + 1].placable = true;
+    }
+    if (y < this.grid.length - 1 && x < this.grid.length - 1) {
+      this.grid[y + 1][x + 1].placable = true;
+    }
+    if (y > 0 && x > 0) {
+      this.grid[y - 1][x - 1].placable = true;
+    }
+    if (y < this.grid.length - 1 && x > 0) {
+      this.grid[y + 1][x - 1].placable = true;
+    }
     resolve();
   });
 };
 
 Grid.prototype.doesUserWin = function (user, count) {
   console.log("doesUserWin", user, count);
+
   return (
     this.isThereARowOf(user.color, count) ||
     this.isThereAColumnOf(user.color, count) ||

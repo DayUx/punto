@@ -14,7 +14,7 @@ const Game = () => {
   const navigate = useNavigate();
   const socket = useRef();
 
-  const [cards, setCards] = useState([]);
+  const [card, setCard] = useState([]);
   const [grid, setGrid] = useState([]);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Game = () => {
     socket.current = io(APIRoutes.host);
     socket.current.on("updateGame", (data) => {
       console.log("updateGame", data);
-      setCards(data.cards);
+      setCard(data.card);
       setGrid(data.grid.grid);
     });
 
@@ -90,7 +90,7 @@ const Game = () => {
         grid={grid}
       ></Grid>
 
-      <Card cards={cards}></Card>
+      <Card value={card.value} id={card.id} color={card.color}></Card>
     </div>
   );
 };

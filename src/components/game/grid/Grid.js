@@ -10,17 +10,7 @@ const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
       e.target.classList.remove("hovered");
       if (column.placable && !e.target.classList.contains("filled")) {
         const card = document.getElementById(e.dataTransfer.getData("id"));
-        card.draggable = false;
-        e.target.appendChild(card);
-        e.target.classList.add("filled");
         onCardDrop(e.dataTransfer.getData("id"), rowIndex, columnIndex);
-
-        grid[rowIndex][columnIndex] = {
-          empty: false,
-          value: card.getAttribute("value"),
-          color: card.getAttribute("color"),
-          user: null,
-        };
       }
     };
   }
@@ -74,6 +64,7 @@ const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
                       <Card
                         color={column.card.color}
                         value={column.card.value}
+                        disable={true}
                       />
                     )}
                   </div>

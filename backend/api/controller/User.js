@@ -16,8 +16,25 @@ User.prototype.addCard = function (card) {
 
 User.prototype.removeCard = function (id) {
   console.log("removeCard", id);
-
   this.cards = this.cards.filter((c) => c.id !== id);
+};
+
+User.prototype.pickNextCard = function () {
+  console.log("pickNextCard");
+  return new Promise((resolve, reject) => {
+    let card = this.cards[0];
+    this.removeCard(card.id);
+    this.currentCard = card;
+    resolve(card);
+  });
+};
+
+User.prototype.shuffleCards = function () {
+  console.log("shuffleCards");
+  return new Promise(async (resolve, reject) => {
+    this.cards = this.cards.sort(() => Math.random() - 0.5);
+    resolve();
+  });
 };
 
 User.prototype.getCard = async function (id) {

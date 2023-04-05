@@ -3,6 +3,7 @@ const Game = require("../model/GameModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const GameClass = require("./GameClass");
+const Debug = require("./Debug");
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -95,7 +96,7 @@ module.exports.newGame = async (req, res, next) => {
       aborted: false,
       players: [],
     });
-    console.log("GAME UPDATE");
+    Debug("GAME UPDATE");
     global.io.sockets.emit("updateGame", game);
     return res.status(200).json({ game: game });
   } catch (e) {
@@ -105,7 +106,7 @@ module.exports.newGame = async (req, res, next) => {
 module.exports.joinGame = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
-    console.log("JOIN GAME", token);
+    // Debug("JOIN GAME", token);
     const userJson = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = req.body;
     const game = await Game.findOne({ _id: id });
@@ -143,11 +144,11 @@ module.exports.joinGame = async (req, res, next) => {
         global.io.sockets.emit("startGame", game);
         global.io.sockets.emit("removeGame", game);
         global.games[game._id.toString()] = new GameClass(game);
-        console.log("GAME START", game._id.toString());
+        Debug("GAME START", game._id.toString());
         return res.status(200).json({ game: game });
         return;
       }
-      console.log("GAME UPDATE", game._id.toString());
+      Debug("GAME UPDATE", game._id.toString());
       global.io.to("gamelist").to(game._id.toString()).emit("updateGame", game);
     }
 

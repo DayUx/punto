@@ -1,10 +1,13 @@
 .grid {
-  border: solid 1px var(--bg-dark);
   width: var(--grid-width);
   height: var(--grid-width);
   /*background: #fff;*/
   display: grid;
+  transform-origin: center;
   box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }
 .grid .cell {
   box-sizing: border-box;

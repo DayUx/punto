@@ -2,7 +2,7 @@ import "./Card.css";
 import { createRef, forwardRef, useImperativeHandle } from "react";
 import Logo from "../../base/logo/Logo";
 
-const Card = forwardRef(({ color, value, id, disable }, ref) => {
+const Card = forwardRef(({ color, value, id, disable, size = 50 }, ref) => {
   const cardRef = createRef();
 
   useImperativeHandle(ref, () => ({
@@ -79,9 +79,13 @@ const Card = forwardRef(({ color, value, id, disable }, ref) => {
   return (
     <div
       ref={cardRef}
+      style={{
+        width: size,
+        height: size,
+      }}
       className={`card ${color} value-${value} ${
         !value || value < 0 || value > 9 ? "turned" : ""
-      }`}
+      } ${disable ? "disable" : ""}`}
       id={id}
       value={value}
       color={color}
@@ -121,7 +125,7 @@ const Card = forwardRef(({ color, value, id, disable }, ref) => {
           )}
         </div>
         <div className={"back"}>
-          <Logo size={30} />
+          <Logo size={20} />
         </div>
       </div>
     </div>

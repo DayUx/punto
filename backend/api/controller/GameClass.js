@@ -1,6 +1,7 @@
 const Grid = require("./Grid");
 const User = require("./User");
 const Card = require("./Card");
+const Debug = require("./Debug");
 
 function GameClass(game) {
   this.users = [];
@@ -11,6 +12,7 @@ function GameClass(game) {
       this.addUser(
         new User(p.user_id, p.username, [this.color.pop(), this.color.pop()])
       );
+      console.log(p.username, this.color);
     });
   } else {
     game.players.forEach((p) => {
@@ -30,7 +32,7 @@ function GameClass(game) {
 }
 
 GameClass.prototype.shuffleAllPlayerCards = function () {
-  console.log("shuffleAllPlayerCards");
+  Debug("shuffleAllPlayerCards");
   return new Promise(async (resolve, reject) => {
     let itemProcessed = 0;
     for (const u of this.users) {
@@ -44,7 +46,7 @@ GameClass.prototype.shuffleAllPlayerCards = function () {
 };
 
 GameClass.prototype.getPlayerPlaying = async function () {
-  console.log("getPlayerPlaying");
+  Debug("getPlayerPlaying");
   return new Promise((resolve, reject) => {
     this.users.forEach((u) => {
       if (u.playing) {
@@ -56,10 +58,10 @@ GameClass.prototype.getPlayerPlaying = async function () {
 
 GameClass.prototype.nextPlayer = async function () {
   return new Promise(async (resolve, reject) => {
-    console.log("nextPlayer");
+    Debug("nextPlayer");
     const playerPlaying = await this.getPlayerPlaying();
     const index = this.users.indexOf(playerPlaying);
-    console.log("index", index);
+    Debug("index", index);
     this.users.forEach((u) => {
       u.playing = false;
     });
@@ -72,12 +74,12 @@ GameClass.prototype.nextPlayer = async function () {
 };
 
 GameClass.prototype.setUserOk = async function (id) {
-  console.log("setUserOk", id);
+  Debug("setUserOk", id);
   for (const u of this.users) {
     if (u.id === id) {
       u.setUserOk();
       global.io.to(id).emit("updateGame", {
-        card: u.currentCard,
+        players: this.users,
         grid: this.grid,
         playerPlaying: await this.getPlayerPlaying(),
       });
@@ -87,12 +89,12 @@ GameClass.prototype.setUserOk = async function (id) {
 
 GameClass.prototype.checkPlay = async function (userId, x, y) {
   return new Promise(async (resolve, reject) => {
-    console.log("checkPlay", userId, x, y);
+    Debug("checkPlay", userId, x, y);
     const user = await this.getPlayer(userId);
     const card = await user.currentCard;
     const playerPlaying = await this.getPlayerPlaying();
     if (user && playerPlaying.id === userId) {
-      const isPlaced = await this.grid.placeCard(card, x, y);
+      const isPlaced = this.grid.placeCard(card, x, y);
       if (isPlaced) {
         await this.grid.setPlacable(card.color);
         await user.pickNextCard();
@@ -103,21 +105,16 @@ GameClass.prototype.checkPlay = async function (userId, x, y) {
         this.grid.doesUserWin(user, count)
           ? (user.win = true)
           : await this.nextPlayer();
-        this.updateUsers();
+        await this.updateUsers();
         resolve();
         return;
       }
     }
-    global.io.to(userId).emit("updateGame", {
-      card: user.currentCard,
-      grid: this.grid,
-      playerPlaying: playerPlaying,
-    });
   });
 };
 
 GameClass.prototype.getPlayer = async function (id) {
-  console.log("getPlayer", id);
+  Debug("getPlayer", id);
   return new Promise((resolve, reject) => {
     this.users.forEach((u) => {
       if (u.id === id) {
@@ -128,10 +125,11 @@ GameClass.prototype.getPlayer = async function (id) {
 };
 
 GameClass.prototype.updateUsers = async function () {
-  console.log("updateUsers");
+  Debug("updateUsers");
+  console.log("Update users");
   for (const u of this.users) {
     global.io.to(u.id).emit("updateGame", {
-      card: u.currentCard,
+      players: this.users,
       grid: this.grid,
       playerPlaying: await this.getPlayerPlaying(),
     });
@@ -188,17 +186,17 @@ GameClass.prototype.initCards = function () {
     switch (this.users.length) {
       case 2:
         resolve(await this.initCards2());
-        break;
+        return;
       case 3:
         await this.initCards3Or4();
         break;
       case 4:
         resolve(await this.initCards3Or4());
-        break;
+        return;
     }
     const cardsValue = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9];
     const shuffledArray = cardsValue.sort((a, b) => 0.5 - Math.random());
-
+    console.log("WTFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", this.users.length);
     let itemProcessed = 0;
     this.users.forEach((u, index, array) => {
       for (let i = 0; i < numberOfCards / 2 / 3; i++) {

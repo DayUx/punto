@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
   });
   socket.on("placeCard", async (data) => {
     try {
-      console.log("placeCard", data);
+      // console.log("placeCard", data);
       const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
       if (decoded) {
         if (global.games[data.gameId]) {

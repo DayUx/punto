@@ -5,6 +5,8 @@ import Card from "../card/Card";
 const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
   console.log(grid);
 
+  const [zoom, setZoom] = useState(1);
+
   function onDrop(column, rowIndex, columnIndex) {
     return function (e) {
       e.target.classList.remove("hovered");
@@ -21,13 +23,38 @@ const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
 
   return (
     <div
+      onWheel={function (e) {
+        e.stopPropagation();
+        console.log(e.deltaY);
+        setZoom((zoom) => {
+          if (zoom > 0.5 && zoom < 2.5) {
+            if (e.deltaY < 0) {
+              return zoom + 0.2;
+            } else {
+              return zoom - 0.2;
+            }
+          }
+          if (zoom <= 0.5 && e.deltaY < 0) {
+            return zoom + 0.2;
+          }
+          if (zoom >= 2.5 && e.deltaY > 0) {
+            return zoom - 0.2;
+          }
+          return zoom;
+        });
+      }}
       className={`grid`}
       style={
         grid
           ? {
               gridTemplateColumns: `repeat(${grid.length}, 1fr)`,
+              transform: `translate(-50%, -50%) scale(${zoom})  `,
+              transition: "transform 0.5s",
             }
-          : {}
+          : {
+              transform: `translate(-50%, -50%) scale(${zoom})`,
+              transition: "transform 0.5s",
+            }
       }
     >
       {grid ? (

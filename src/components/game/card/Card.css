@@ -1,6 +1,4 @@
 .card {
-  width: 120px;
-  height: 120px;
   box-sizing: border-box;
 }
 
@@ -56,12 +54,20 @@
   position: absolute;
   height: 100%;
   width: 100%;
+  animation: hollow 1s infinite;
   line-height: 300px;
   color: #03446a;
   text-align: center;
   font-size: 60px;
   backface-visibility: hidden;
   box-shadow: var(--shadow);
+  cursor: grab;
+}
+
+.disable .front,
+.disable .back {
+  animation: none;
+  cursor: default;
 }
 
 .back {
@@ -75,4 +81,16 @@
   display: grid;
   grid-template-columns: 3fr 3fr 3fr;
   perspective: 500px;
+}
+
+@keyframes hollow {
+  0% {
+    background: var(--bg-dark);
+  }
+  50% {
+    background: #3b3939;
+  }
+  100% {
+    background: var(--bg-dark);
+  }
 }

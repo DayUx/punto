@@ -20,6 +20,7 @@ import Music from "./components/base/music/Music";
 import Home from "./components/page/home/Home";
 import Wait from "./components/page/wait/Wait";
 import Game from "./components/page/game/Game";
+import Debug from "./components/base/debug/Debug";
 
 function App() {
   const navigate = useNavigate();

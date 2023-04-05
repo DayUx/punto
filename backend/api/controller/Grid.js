@@ -1,18 +1,20 @@
+const Debug = require("./Debug");
+
 function Grid(grid) {
   this.grid = grid;
 }
 Grid.prototype.placeCard = function (card, x, y) {
-  console.log("placeCard : ", card, x, y);
-  if (this.grid[y][x].empty || this.grid[y][x].card.value < card.value) {
-    this.grid[y][x].card = card;
-    this.grid[y][x].empty = false;
+  Debug("placeCard : ", card, x, y);
+  if (this.grid[x][y].empty || this.grid[x][y].card.value < card.value) {
+    this.grid[x][y].card = card;
+    this.grid[x][y].empty = false;
     return true;
   }
   return false;
 };
 
 Grid.prototype.setPlacable = function (color) {
-  console.log("setPlacable");
+  Debug("setPlacable");
   return new Promise(async (resolve, reject) => {
     for (const row of this.grid) {
       const rowIndex = this.grid.indexOf(row);
@@ -30,13 +32,15 @@ Grid.prototype.setPlacable = function (color) {
   });
 };
 
+function getLowestY() {}
+
 Grid.prototype.setPlacableAroundCell = function (x, y, color) {
   return new Promise(async (resolve, reject) => {
     if (this.grid[y][x].empty) {
-      return;
+      resolve();
     }
     if (this.grid[y][x].card.color !== color) {
-      return;
+      resolve();
     }
     if (y > 0) {
       this.grid[y - 1][x].placable = true;
@@ -67,7 +71,7 @@ Grid.prototype.setPlacableAroundCell = function (x, y, color) {
 };
 
 Grid.prototype.doesUserWin = function (user, count) {
-  console.log("doesUserWin", user, count);
+  Debug("doesUserWin", user, count);
 
   return (
     this.isThereARowOf(user.color, count) ||
@@ -77,7 +81,7 @@ Grid.prototype.doesUserWin = function (user, count) {
 };
 
 Grid.prototype.isThereARowOf = function (color, count) {
-  console.log("isThereARowOf", color, count);
+  Debug("isThereARowOf", color, count);
   this.grid.forEach((row) => {
     let i = 0;
     row.forEach((column) => {
@@ -92,7 +96,7 @@ Grid.prototype.isThereARowOf = function (color, count) {
   return false;
 };
 Grid.prototype.isThereAColumnOf = function (color, count) {
-  console.log("isThereAColumnOf", color, count);
+  Debug("isThereAColumnOf", color, count);
   for (let i = 0; i < this.grid.length; i++) {
     let j = 0;
     for (let j = 0; j < this.grid.length; j++) {
@@ -107,7 +111,7 @@ Grid.prototype.isThereAColumnOf = function (color, count) {
   return false;
 };
 Grid.prototype.isThereADiagonalOf = function (color, count) {
-  console.log("isThereADiagonalOf", color, count);
+  Debug("isThereADiagonalOf", color, count);
   let i = 0;
   for (let j = 0; j < this.grid.length; j++) {
     if (!this.grid[j][j].empty && this.grid[j][j].card.color === color) {

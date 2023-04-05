@@ -6,7 +6,7 @@
   --bg-dark: #231f20;
   --bg-light: #f5f5f5;
   --shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  --grid-width: calc(min(100vw, 100vh) - 200px);
+  --grid-width: calc(min(60vw, 60vh));
 }
 
 .font-rouge {
@@ -52,6 +52,7 @@ body {
     rgba(255, 255, 255, 0.2) 1.3px,
     transparent 0
   );
+  overflow: hidden;
   background-size: 20px 20px;
   background-position: center;
   animation: background-move 30s ease-in-out infinite;

@@ -5,4 +5,33 @@
   justify-content: space-between;
   min-height: calc(100vh - 100px);
   width: 100%;
+  position: relative;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.gameInfo {
+  color: white;
+  text-transform: uppercase;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.ennemies {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  gap: 20px;
+}
+.rowEnnemies {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  flex: 1;
 }

@@ -1,0 +1,48 @@
+.dot.rouge {
+  background: #ed1d23;
+}
+.dot.bleu {
+  background: #00b9f1;
+}
+.dot.vert {
+  background: #70be44;
+}
+.dot.jaune {
+  background: #f9ae19;
+}
+
+.dot {
+  background: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+.dots {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.player {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  text-transform: uppercase;
+  gap: 20px;
+  align-items: center;
+}
+
+.player .username {
+  height: 100%;
+  font-size: 50px;
+}
+.infos .gameInfo {
+  color: white;
+  text-transform: uppercase;
+}
+.infos {
+  display: flex;
+  flex-direction: column;
+}

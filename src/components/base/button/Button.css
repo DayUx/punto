@@ -1,17 +1,54 @@
 .button {
-  font-weight: bolder;
   font-size: 15px;
-  color: #fff;
+  font-weight: lighter;
+
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  border-radius: 100px;
-  padding: 10px 20px;
+  padding: 5px 15px;
+  border: none;
   transition: 0.2s;
-  border: 3px solid #fff;
-  box-sizing: border-box;
   background: transparent;
   cursor: pointer;
+  position: relative;
 }
 .button:hover {
-  color: var(--bg-dark);
-  background: #fff;
+  opacity: 0.6;
+}
+.button:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 100px;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  background: transparent;
+  transition: 0.2s;
+  filter: blur(8px);
+}
+.button:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-sizing: border-box;
+  background: transparent;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    black 0%,
+    rgba(0, 0, 0, 0) 50%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    black 0%,
+    rgba(0, 0, 0, 0) 50%,
+    black 100%
+  );
 }

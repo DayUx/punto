@@ -69,6 +69,7 @@ const Player = ({
         id={card?.id}
         color={card?.color}
         size={size === "small" ? 50 : 90}
+        blinking={playerPlaying?.id === player?.id}
       ></Card>
     </div>
   );

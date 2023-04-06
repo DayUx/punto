@@ -13,11 +13,6 @@ const Button = ({ children, onClick, className, disabled, color }) => {
       className={`button ${className} ${isHovered ? "hover" : ""}`}
       onClick={onClick}
       disabled={disabled}
-      style={{
-        backgroundColor: isHovered ? color : "transparent",
-        borderColor: color,
-        color: isHovered ? "var(--bg-dark)" : color,
-      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

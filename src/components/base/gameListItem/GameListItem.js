@@ -3,15 +3,21 @@ import { MdPlayArrow, MdOutlineClose } from "react-icons/md";
 import "./GameListItem.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const GameListItem = ({ name, maxPlayers, numberPlayers = 0, id }) => {
+const GameListItem = ({
+  name,
+  maxPlayers,
+  numberPlayers = 0,
+  id,
+  opaque = false,
+}) => {
   const [isWaiting, setIsWaiting] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div className={"gameListItem"}>
+    <div className={`gameListItem ${opaque ? "opaque" : ""}`}>
       <span className={"title"}>{name}</span>
       <span className={"infos"}>
-        <span className={"numberPlayers"}>
+        <span className={"numberPlayers glowingBorder"}>
           {numberPlayers}/{maxPlayers}
         </span>
 

@@ -14,9 +14,7 @@ const IconButton = ({ children, onClick, className, disabled, color }) => {
       onClick={onClick}
       disabled={disabled}
       style={{
-        backgroundColor: isHovered ? color : "transparent",
-        borderColor: color,
-        color: isHovered ? "var(--bg-dark)" : color,
+        "--buttonBorderColor": color,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

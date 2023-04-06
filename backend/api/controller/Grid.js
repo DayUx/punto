@@ -13,61 +13,104 @@ Grid.prototype.placeCard = function (card, x, y) {
   return false;
 };
 
+Grid.prototype.resetPlacable = function () {
+  for (const row of this.grid) {
+    for (const column of row) {
+      column.placable = false;
+    }
+  }
+};
 Grid.prototype.setPlacable = function (color) {
   Debug("setPlacable");
+  this.bounds = this.getBounds();
   return new Promise(async (resolve, reject) => {
-    for (const row of this.grid) {
-      const rowIndex = this.grid.indexOf(row);
-      for (const column of row) {
-        const columnIndex = row.indexOf(column);
-        if (!column.empty) {
-          if (column.card.color !== color) {
-            column.placable = true;
-          }
-          await this.setPlacableAroundCell(columnIndex, rowIndex, color);
-        }
+    for (let rowIndex = 0; rowIndex < this.grid.length; rowIndex++) {
+      for (let columnIndex = 0; columnIndex < this.grid.length; columnIndex++) {
+        const cell = this.grid[rowIndex][columnIndex];
+        cell.placable = false;
+        this.setPlacableAroundCell(columnIndex, rowIndex, color);
       }
     }
     resolve();
   });
 };
 
-function getLowestY() {}
+Grid.prototype.getBounds = function () {
+  let topLeft = { x: 6, y: 6 };
+  let bottomRight = { x: 6, y: 6 };
+  for (let y = 0; y < this.grid.length; y++) {
+    for (let x = 0; x < this.grid.length; x++) {
+      if (!this.grid[y][x].empty) {
+        if (x < topLeft.x) {
+          topLeft.x = x;
+        }
+        if (y < topLeft.y) {
+          topLeft.y = y;
+        }
+        if (x > bottomRight.x) {
+          bottomRight.x = x;
+        }
+        if (y > bottomRight.y) {
+          bottomRight.y = y;
+        }
+      }
+    }
+  }
+  return { topLeft: topLeft, bottomRight: bottomRight };
+};
+
+Grid.prototype.isThereCardAround = function (x, y) {
+  if (y > 0 && !this.grid[y - 1][x].empty) {
+    return true;
+  }
+  if (y < this.grid.length - 1 && !this.grid[y + 1][x].empty) {
+    return true;
+  }
+  if (x > 0 && !this.grid[y][x - 1].empty) {
+    return true;
+  }
+  if (x < this.grid.length - 1 && !this.grid[y][x + 1].empty) {
+    return true;
+  }
+  if (y > 0 && x > 0 && !this.grid[y - 1][x - 1].empty) {
+    return true;
+  }
+  if (y > 0 && x < this.grid.length - 1 && !this.grid[y - 1][x + 1].empty) {
+    return true;
+  }
+  if (y < this.grid.length - 1 && x > 0 && !this.grid[y + 1][x - 1].empty) {
+    return true;
+  }
+  if (
+    y < this.grid.length - 1 &&
+    x < this.grid.length - 1 &&
+    !this.grid[y + 1][x + 1].empty
+  ) {
+    return true;
+  }
+
+  return false;
+};
 
 Grid.prototype.setPlacableAroundCell = function (x, y, color) {
-  return new Promise(async (resolve, reject) => {
-    if (this.grid[y][x].empty) {
-      resolve();
+  if (!this.grid[y][x].empty) {
+    return;
+  }
+  const isThereCardAround = this.isThereCardAround(x, y);
+  let isPlacable = true;
+  if (this.bounds.bottomRight.x - this.bounds.topLeft.x >= 5) {
+    if (!(x >= this.bounds.topLeft.x && x <= this.bounds.bottomRight.x)) {
+      isPlacable = false;
     }
-    if (this.grid[y][x].card.color !== color) {
-      resolve();
+  }
+  if (this.bounds.bottomRight.y - this.bounds.topLeft.y >= 5) {
+    if (!(y >= this.bounds.topLeft.y && y <= this.bounds.bottomRight.y)) {
+      isPlacable = false;
     }
-    if (y > 0) {
-      this.grid[y - 1][x].placable = true;
-    }
-    if (y < this.grid.length - 1) {
-      this.grid[y + 1][x].placable = true;
-    }
-    if (x > 0) {
-      this.grid[y][x - 1].placable = true;
-    }
-    if (x < this.grid.length - 1) {
-      this.grid[y][x + 1].placable = true;
-    }
-    if (y > 0 && x < this.grid.length - 1) {
-      this.grid[y - 1][x + 1].placable = true;
-    }
-    if (y < this.grid.length - 1 && x < this.grid.length - 1) {
-      this.grid[y + 1][x + 1].placable = true;
-    }
-    if (y > 0 && x > 0) {
-      this.grid[y - 1][x - 1].placable = true;
-    }
-    if (y < this.grid.length - 1 && x > 0) {
-      this.grid[y + 1][x - 1].placable = true;
-    }
-    resolve();
-  });
+  }
+  if (isThereCardAround && isPlacable) {
+    this.grid[y][x].placable = true;
+  }
 };
 
 Grid.prototype.doesUserWin = function (user, count) {

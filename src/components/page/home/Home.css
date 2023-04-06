@@ -24,18 +24,33 @@
 
 .home .gameList {
   width: 100%;
+  flex: 1;
   background: var(--bg-dark);
   display: flex;
+  height: fit-content;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  gap: 20px;
-  padding: 20px 20px;
   box-sizing: border-box;
-  border-radius: 50px;
-  box-shadow: var(--shadow);
+}
+
+.home .gameList .content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow-y: scroll;
 }
+.home .gameList .content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+.home .gameList .content::-webkit-scrollbar-thumb {
+  background: var(--vert);
+  border-radius: 10px;
+}
+
 .home .gameList::-webkit-scrollbar {
   width: 0px;
   background: transparent;
@@ -50,19 +65,29 @@
   gap: 20px;
   padding: 20px 20px;
   box-sizing: border-box;
-  border-radius: 50px;
-  box-shadow: var(--shadow);
+  border-radius: 10px;
 }
-
 .home .createGame .gameName {
   width: 100%;
   padding: 10px 20px;
   box-sizing: border-box;
-  border: 3px solid #fff;
-  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
   background: transparent;
   color: #fff;
   font-size: 15px;
   font-weight: bolder;
+  display: flex;
   outline: none;
+}
+.home .createGame .gameName:focus {
+  border: 1px solid var(--vert);
+}
+.home .noGames {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
 }

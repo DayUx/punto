@@ -130,26 +130,29 @@ const Home = () => {
   return (
     <div className={"home"}>
       <div className={"home-content"}>
-        <div className={"gameList"}>
-          {games.length > 0 ? (
-            games.map((game, index) => {
-              return (
-                <GameListItem
-                  key={index}
-                  numberPlayers={game.players.length}
-                  maxPlayers={game.maxPlayers}
-                  name={game.name}
-                  id={game._id}
-                ></GameListItem>
-              );
-            })
-          ) : (
-            <div className={"noGames"}>
-              <h1>No games available</h1>
-            </div>
-          )}
+        <div className={"gameList glowingBorder"}>
+          <div className={"content"}>
+            {games.length > 0 ? (
+              games.map((game, index) => {
+                return (
+                  <GameListItem
+                    key={index}
+                    opaque={index % 2 === 0}
+                    numberPlayers={game.players.length}
+                    maxPlayers={game.maxPlayers}
+                    name={game.name}
+                    id={game._id}
+                  ></GameListItem>
+                );
+              })
+            ) : (
+              <div className={"noGames"}>
+                <h1>Aucune partie trouvée</h1>
+              </div>
+            )}
+          </div>
         </div>
-        <div className={"createGame"}>
+        <div className={"createGame glowingBorder"}>
           <input
             className={"gameName"}
             placeholder={"Name of the game"}

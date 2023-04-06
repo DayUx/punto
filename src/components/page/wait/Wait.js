@@ -109,19 +109,20 @@ const Wait = () => {
 
   return (
     <div className="wait">
-      <div className="waitContainer">
+      <div className="waitContainer glowingBorder">
         <div className="gameInfos">
           <span className="title">{game.name}</span>
-          <span className="infos">
-            <span className="numberPlayers">
-              {game.numberPlayers}/{game.maxPlayers}
-            </span>
+          <span className="numberPlayers glowingBorder">
+            {game.numberPlayers}/{game.maxPlayers}
           </span>
         </div>
         <div className={"playerList"}>
           {players.map((player, index) => {
             return (
-              <div key={index} className={"player"}>
+              <div
+                key={index}
+                className={`player ${index % 2 === 0 ? "opaque" : ""}`}
+              >
                 <span className={"name"}>{player.username}</span>
               </div>
             );

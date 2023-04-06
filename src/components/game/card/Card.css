@@ -54,7 +54,6 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  animation: hollow 1s infinite;
   line-height: 300px;
   color: #03446a;
   text-align: center;
@@ -64,9 +63,13 @@
   cursor: grab;
 }
 
+.blinking .front,
+.blinking .back {
+  animation: hollow 1s infinite;
+}
+
 .disable .front,
 .disable .back {
-  animation: none;
   cursor: default;
 }
 

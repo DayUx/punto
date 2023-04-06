@@ -22,7 +22,11 @@ const Music = () => {
   }, []);
 
   return (
-    <IconButton onClick={isPlaying ? Stopit : Playit} className={"music"}>
+    <IconButton
+      color={"#fff"}
+      onClick={isPlaying ? Stopit : Playit}
+      className={"music"}
+    >
       {isPlaying ? (
         <MdOutlineMusicNote size={20} />
       ) : (

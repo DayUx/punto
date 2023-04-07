@@ -5,11 +5,12 @@ import "./Wait.css";
 import { useEffect, useRef, useState } from "react";
 import { APIRoutes } from "../../../utils/APIRoutes";
 import { io } from "socket.io-client";
+import Loading from "../../game/loading/Loading";
 
 const Wait = () => {
   const location = useLocation();
   const socket = useRef();
-
+  const [loadingText, setLoadingText] = useState(undefined);
   let loading;
 
   const [game, setGame] = useState({
@@ -47,15 +48,6 @@ const Wait = () => {
       const ok = response.ok;
       response.json().then((data) => {
         if (ok) {
-          if (data.game.players.length === data.game.maxPlayers) {
-            toast.dismiss(loading);
-            navigate("/game", {
-              state: {
-                id: data.game._id,
-              },
-            });
-          }
-
           setGame({
             name: data.game.name,
             numberPlayers: data.game.players.length,
@@ -73,10 +65,14 @@ const Wait = () => {
             });
             setPlayers(data.players);
           });
+          socket.current.on("loading", (text) => {
+            toast.dismiss();
+            setLoadingText(text);
+          });
 
           socket.current.on("startGame", (data) => {
             console.log("startGame", data);
-            toast.dismiss(loading);
+            toast.dismiss();
             navigate("/game", {
               state: {
                 id: data._id,
@@ -109,6 +105,7 @@ const Wait = () => {
 
   return (
     <div className="wait">
+      <Loading text={loadingText}></Loading>
       <div className="waitContainer glowingBorder">
         <div className="gameInfos">
           <span className="title">{game.name}</span>

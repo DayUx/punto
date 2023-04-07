@@ -17,23 +17,12 @@
   gap: 20px;
   width: 100%;
   max-width: 500px;
-  padding: 50px 70px;
+  padding: 50px;
   box-sizing: border-box;
-  border-radius: 25px;
-  box-shadow: var(--shadow);
 }
 
 .register .form input {
   width: 100%;
-  padding: 10px 20px;
-  box-sizing: border-box;
-  border: 3px solid #fff;
-  border-radius: 100px;
-  background: transparent;
-  color: #fff;
-  font-size: 15px;
-  font-weight: bolder;
-  outline: none;
 }
 
 .register .form label {

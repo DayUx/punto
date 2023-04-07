@@ -50,7 +50,7 @@ const Register = () => {
 
   return (
     <div className="register">
-      <form className={"form"} onSubmit={handleSubmit}>
+      <form className={"form glowingBorder"} onSubmit={handleSubmit}>
         <label htmlFor="email">Adresse Email</label>
         <input
           type="text"

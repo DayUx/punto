@@ -141,15 +141,17 @@ module.exports.joinGame = async (req, res, next) => {
       }
       await game.save();
       if (start) {
-        global.io.sockets.emit("startGame", game);
-        global.io.sockets.emit("removeGame", game);
-        global.games[game._id.toString()] = new GameClass(game);
-        Debug("GAME START", game._id.toString());
+        timeout(game).then(() => {
+          global.io.to(game._id.toString()).emit("startGame", game);
+          global.io.sockets.emit("removeGame", game);
+          global.games[game._id.toString()] = new GameClass(game);
+          Debug("GAME START", game._id.toString());
+        });
         return res.status(200).json({ game: game });
-        return;
       }
       Debug("GAME UPDATE", game._id.toString());
-      global.io.to("gamelist").to(game._id.toString()).emit("updateGame", game);
+      global.io.to("gamelist").emit("updateGameList", game);
+      global.io.to(game._id.toString()).emit("updateGame", game);
     }
 
     return res.status(200).json({ game: game });
@@ -158,6 +160,27 @@ module.exports.joinGame = async (req, res, next) => {
     next(e);
   }
 };
+
+function timeout(game) {
+  return new Promise((resolve) => {
+    global.io.to(game._id.toString()).emit("loading", "ALL PLAYERS READY");
+    setTimeout(() => {
+      global.io.to(game._id.toString()).emit("loading", "3");
+      setTimeout(() => {
+        global.io.to(game._id.toString()).emit("loading", "2");
+        setTimeout(() => {
+          global.io.to(game._id.toString()).emit("loading", "1");
+          setTimeout(() => {
+            global.io.to(game._id.toString()).emit("loading", "FIGHT !!!");
+            setTimeout(() => {
+              resolve();
+            }, 1000);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
+  }, 1000);
+}
 
 module.exports.getGames = async (req, res, next) => {
   try {

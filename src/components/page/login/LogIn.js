@@ -49,7 +49,7 @@ const LogIn = () => {
 
   return (
     <div className="login">
-      <form className={"form"} onSubmit={handleSubmit}>
+      <form className={"form glowingBorder"} onSubmit={handleSubmit}>
         <label htmlFor="username">Nom d'utilisateur</label>
         <input
           type="text"

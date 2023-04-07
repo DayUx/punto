@@ -36,7 +36,9 @@ const Home = () => {
   });
 
   useEffect(() => {
+    toast.dismiss();
     if (!localStorage.getItem("user")) {
+      socket.current.removeAllListeners();
       navigate("/login");
     }
     getGames();
@@ -56,15 +58,14 @@ const Home = () => {
           setGames(data.games);
           socket.current = io(APIRoutes.host);
 
-          socket.current.on("updateGame", (data) => {
-            console.log("updateGame", data);
+          socket.current.on("updateGameList", (data) => {
+            console.log("updateGameList", data);
             setArrivalUpdate(data);
           });
           socket.current.on("removeGame", (data) => {
             console.log("removeGame", data);
             setRemovedGame(data);
           });
-
           socket.current.emit("gamelist", {
             token: localStorage.getItem("user"),
           });
@@ -72,6 +73,7 @@ const Home = () => {
           toast.error(data.message);
           if (response.status === 401) {
             localStorage.removeItem("user");
+            socket.current.removeAllListeners();
             navigate("/login");
           }
         }

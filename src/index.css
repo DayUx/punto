@@ -69,6 +69,22 @@ body {
   }
 }
 
+input {
+  padding: 10px 20px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bolder;
+  display: flex;
+  outline: none;
+}
+input:focus {
+  border: 1px solid var(--vert);
+}
+
 .glowingBorder {
   position: relative;
   border-radius: 10px;
@@ -86,6 +102,8 @@ body {
   filter: blur(10px);
   pointer-events: none;
   box-sizing: border-box;
+  animation: glowing 3s ease-in-out infinite;
+  transition: 2s;
 }
 
 .glowingBorder:before {
@@ -111,6 +129,18 @@ body {
     rgba(0, 0, 0, 0.1) 50%,
     black 100%
   );
+}
+
+@keyframes glowing {
+  0% {
+    filter: blur(12px);
+  }
+  50% {
+    filter: blur(8px);
+  }
+  100% {
+    filter: blur(12px);
+  }
 }
 
 @font-face {

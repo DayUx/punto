@@ -1,7 +1,7 @@
 import Card from "./Card";
 import "./Cards.css";
 
-const Cards = ({ cards = [], onCardClick, draggable, vertical, disable }) => {
+const Cards = ({ cards = [], disable }) => {
   return (
     <div className="cards">
       {cards.map((card, index) => {

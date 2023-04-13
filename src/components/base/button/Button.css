@@ -42,13 +42,13 @@
   -webkit-mask-image: linear-gradient(
     90deg,
     black 0%,
-    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.2) 50%,
     black 100%
   );
   mask-image: linear-gradient(
     90deg,
     black 0%,
-    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.2) 50%,
     black 100%
   );
 }

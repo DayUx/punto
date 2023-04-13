@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import "./Loading.css";
-const Loading = ({ text, delay }) => {
-  const ref = useRef();
 
+const Loading = ({ text }) => {
+  const ref = useRef();
   return (
     <div
       style={{

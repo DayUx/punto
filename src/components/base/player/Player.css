@@ -32,6 +32,7 @@
   text-transform: uppercase;
   gap: 20px;
   align-items: center;
+  z-index: 10;
 }
 
 .player .username {

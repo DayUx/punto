@@ -10,6 +10,7 @@ const Player = ({
   size = "small",
   draggable = true,
   vertical = false,
+  endOfGame,
 }) => {
   return (
     <div
@@ -63,14 +64,16 @@ const Player = ({
           })}
         </div>
       </div>
-      <Card
-        disable={!playerPlaying || !draggable}
-        value={card?.value}
-        id={card?.id}
-        color={card?.color}
-        size={size === "small" ? 50 : 90}
-        blinking={playerPlaying?.id === player?.id}
-      ></Card>
+      {!endOfGame ? (
+        <Card
+          disable={!playerPlaying || !draggable}
+          value={card?.value}
+          id={card?.id}
+          color={card?.color}
+          size={size === "small" ? 50 : 90}
+          blinking={playerPlaying?.id === player?.id}
+        ></Card>
+      ) : undefined}
     </div>
   );
 };

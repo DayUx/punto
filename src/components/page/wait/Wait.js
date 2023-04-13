@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import GameListItem from "../../base/gameListItem/GameListItem";
 import toast from "react-hot-toast";
 import "./Wait.css";
 import { useEffect, useRef, useState } from "react";
@@ -8,18 +7,24 @@ import { io } from "socket.io-client";
 import Loading from "../../game/loading/Loading";
 
 const Wait = () => {
+  //utilisation de la fonction location de react-router-dom pour récupérer les paramètres de l'url
   const location = useLocation();
+  // Initialisation du socket
   const socket = useRef();
+  //Text de chargement
   const [loadingText, setLoadingText] = useState(undefined);
   let loading;
 
+  //infos du jeu
   const [game, setGame] = useState({
     name: "",
     numberPlayers: 0,
     maxPlayers: 0,
   });
-
+  //utilisation de useNavigate pour naviguer entre les différentes pages
   const navigate = useNavigate();
+
+  //utilisation de useEffect pour récupérer les informations de la partie
   useEffect(() => {
     loading = toast.loading("Waiting for other players...", {
       position: "bottom-center",
@@ -34,7 +39,6 @@ const Wait = () => {
       navigate("/home");
     }
 
-    console.log(localStorage.getItem("user"));
     fetch(APIRoutes.joinGame, {
       method: "POST",
       headers: {
@@ -71,7 +75,6 @@ const Wait = () => {
           });
 
           socket.current.on("startGame", (data) => {
-            console.log("startGame", data);
             toast.dismiss();
             navigate("/game", {
               state: {

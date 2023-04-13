@@ -2,11 +2,12 @@ const Grid = require("./Grid");
 const User = require("./User");
 const Card = require("./Card");
 const Debug = require("./Debug");
+const Game = require("../model/GameModel");
 
 function GameClass(game) {
-  this.users = [];
+  this.id = game._id;
+  this.players = [];
   this.color = ["rouge", "bleu", "vert", "jaune"];
-
   if (game.players.length === 2) {
     game.players.forEach((p) => {
       this.addUser(
@@ -19,10 +20,10 @@ function GameClass(game) {
       this.addUser(new User(p.user_id, p.username, [this.color.pop()]));
     });
   }
-  this.users[0].playing = true;
+  this.players[0].playing = true;
   this.initCards().then(() => {
     this.shuffleAllPlayerCards().then(() => {
-      this.users.forEach((u) => {
+      this.players.forEach((u) => {
         u.pickNextCard();
       });
     });
@@ -35,10 +36,10 @@ GameClass.prototype.shuffleAllPlayerCards = function () {
   Debug("shuffleAllPlayerCards");
   return new Promise(async (resolve, reject) => {
     let itemProcessed = 0;
-    for (const u of this.users) {
+    for (const u of this.players) {
       await u.shuffleCards();
       itemProcessed++;
-      if (itemProcessed === this.users.length) {
+      if (itemProcessed === this.players.length) {
         resolve();
       }
     }
@@ -48,7 +49,7 @@ GameClass.prototype.shuffleAllPlayerCards = function () {
 GameClass.prototype.getPlayerPlaying = async function () {
   Debug("getPlayerPlaying");
   return new Promise((resolve, reject) => {
-    this.users.forEach((u) => {
+    this.players.forEach((u) => {
       if (u.playing) {
         resolve(u);
       }
@@ -60,26 +61,26 @@ GameClass.prototype.nextPlayer = async function () {
   return new Promise(async (resolve, reject) => {
     Debug("nextPlayer");
     const playerPlaying = await this.getPlayerPlaying();
-    const index = this.users.indexOf(playerPlaying);
+    const index = this.players.indexOf(playerPlaying);
     Debug("index", index);
-    this.users.forEach((u) => {
+    this.players.forEach((u) => {
       u.playing = false;
     });
-    if (index === this.users.length - 1) {
-      resolve((this.users[0].playing = true));
+    if (index === this.players.length - 1) {
+      resolve((this.players[0].playing = true));
     } else {
-      resolve((this.users[(index + 1) % this.users.length].playing = true));
+      resolve((this.players[(index + 1) % this.players.length].playing = true));
     }
   });
 };
 
 GameClass.prototype.setUserOk = async function (id) {
   Debug("setUserOk", id);
-  for (const u of this.users) {
+  for (const u of this.players) {
     if (u.id === id) {
       u.setUserOk();
       global.io.to(id).emit("updateGame", {
-        players: this.users,
+        players: this.players,
         grid: this.grid,
         playerPlaying: await this.getPlayerPlaying(),
       });
@@ -99,24 +100,50 @@ GameClass.prototype.checkPlay = async function (userId, x, y) {
         await this.grid.setPlacable(card.color);
         await user.pickNextCard();
         let count = 4;
-        if (this.users.length === 2) {
+        if (this.players.length === 2) {
           count = 5;
         }
-        this.grid.doesUserWin(user, count)
-          ? (user.win = true)
-          : await this.nextPlayer();
+        if (this.grid.doesUserWin(user, count)) {
+          this.end = true;
+          for (const u of this.players) {
+            global.io.to(u.id).emit("endOfGame", {
+              winner: user,
+            });
+          }
+        } else {
+          await this.nextPlayer();
+        }
+        await this.save();
         await this.updateUsers();
         resolve();
-        return;
       }
     }
   });
 };
 
+GameClass.prototype.save = async function () {
+  await Game.updateOne(
+    { _id: this.id },
+    {
+      $set: {
+        players: this.players.map((u) => {
+          return {
+            user_id: u.id,
+            username: u.username,
+            win: u.win,
+          };
+        }),
+        grid: this.grid.grid,
+        end: this.end,
+      },
+    }
+  );
+};
+
 GameClass.prototype.getPlayer = async function (id) {
   Debug("getPlayer", id);
   return new Promise((resolve, reject) => {
-    this.users.forEach((u) => {
+    this.players.forEach((u) => {
       if (u.id === id) {
         resolve(u);
       }
@@ -127,9 +154,9 @@ GameClass.prototype.getPlayer = async function (id) {
 GameClass.prototype.updateUsers = async function () {
   Debug("updateUsers");
   console.log("Update users");
-  for (const u of this.users) {
+  for (const u of this.players) {
     global.io.to(u.id).emit("updateGame", {
-      players: this.users,
+      players: this.players,
       grid: this.grid,
       playerPlaying: await this.getPlayerPlaying(),
     });
@@ -137,16 +164,16 @@ GameClass.prototype.updateUsers = async function () {
 };
 
 GameClass.prototype.isGameReady = function () {
-  return this.users.every((u) => u.ok);
+  return this.players.every((u) => u.ok);
 };
 
 GameClass.prototype.addUser = function (user) {
-  this.users.push(user);
+  this.players.push(user);
 };
 
 GameClass.prototype.initCards2 = function () {
   const numberOfCards = 72 / 4;
-  this.users.forEach((user, index, array) => {
+  this.players.forEach((user, index, array) => {
     for (let i = 0; i < numberOfCards / 2; i++) {
       user.addCard(
         new Card(`${user.id}${i}${user.colors[0]}`, user.colors[0], i + 1)
@@ -168,7 +195,7 @@ GameClass.prototype.initCards2 = function () {
 
 GameClass.prototype.initCards3Or4 = function () {
   const numberOfCards = 72 / 4;
-  this.users.forEach((user, index, array) => {
+  this.players.forEach((user, index, array) => {
     for (let i = 0; i < numberOfCards / 2; i++) {
       user.addCard(
         new Card(`${user.id}${i}${user.colors[0]}`, user.colors[0], i + 1)
@@ -183,7 +210,7 @@ GameClass.prototype.initCards3Or4 = function () {
 GameClass.prototype.initCards = function () {
   const numberOfCards = 72 / 4;
   return new Promise(async (resolve, reject) => {
-    switch (this.users.length) {
+    switch (this.players.length) {
       case 2:
         resolve(await this.initCards2());
         return;
@@ -196,9 +223,9 @@ GameClass.prototype.initCards = function () {
     }
     const cardsValue = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9];
     const shuffledArray = cardsValue.sort((a, b) => 0.5 - Math.random());
-    console.log("WTFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", this.users.length);
+    console.log("WTFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", this.players.length);
     let itemProcessed = 0;
-    this.users.forEach((u, index, array) => {
+    this.players.forEach((u, index, array) => {
       for (let i = 0; i < numberOfCards / 2 / 3; i++) {
         u.addCard(
           new Card(

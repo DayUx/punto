@@ -114,68 +114,97 @@ Grid.prototype.setPlacableAroundCell = function (x, y, color) {
 };
 
 Grid.prototype.doesUserWin = function (user, count) {
-  Debug("doesUserWin", user, count);
+  console.log("doesUserWin", count);
 
-  return (
-    this.isThereARowOf(user.color, count) ||
-    this.isThereAColumnOf(user.color, count) ||
-    this.isThereADiagonalOf(user.color, count)
-  );
+  let win = false;
+  for (const color of user.colors) {
+    win =
+      win ||
+      this.isThereARowOf(color, count) ||
+      this.isThereAColumnOf(color, count) ||
+      this.isThereADiagonalOf(color, count);
+  }
+
+  if (win) {
+    user.win = true;
+    console.log(user.username, "a gagné !!!!!!");
+  }
+
+  return win;
 };
 
 Grid.prototype.isThereARowOf = function (color, count) {
   Debug("isThereARowOf", color, count);
-  this.grid.forEach((row) => {
-    let i = 0;
-    row.forEach((column) => {
-      if (!column.empty && column.card.color === color) {
-        i++;
+  for (let i = 0; i < this.grid.length; i++) {
+    let x = 0;
+    for (let j = 0; j < this.grid.length; j++) {
+      if (!this.grid[i][j].empty && this.grid[i][j].card.color === color) {
+        x++;
+      } else {
+        if (x < count) {
+          x = 0;
+        }
       }
-    });
-    if (i >= count) {
+    }
+    if (x >= count) {
       return true;
     }
-  });
+  }
   return false;
 };
 Grid.prototype.isThereAColumnOf = function (color, count) {
   Debug("isThereAColumnOf", color, count);
   for (let i = 0; i < this.grid.length; i++) {
-    let j = 0;
+    let x = 0;
     for (let j = 0; j < this.grid.length; j++) {
       if (!this.grid[j][i].empty && this.grid[j][i].card.color === color) {
-        j++;
+        x++;
+      } else {
+        if (x < count) {
+          x = 0;
+        }
       }
     }
-    if (j >= count) {
+    if (x >= count) {
       return true;
     }
   }
   return false;
 };
 Grid.prototype.isThereADiagonalOf = function (color, count) {
-  Debug("isThereADiagonalOf", color, count);
-  let i = 0;
-  for (let j = 0; j < this.grid.length; j++) {
-    if (!this.grid[j][j].empty && this.grid[j][j].card.color === color) {
-      i++;
+  var tailleGrille = this.grid.length;
+
+  for (var i = 0; i <= tailleGrille - count; i++) {
+    for (var j = 0; j <= tailleGrille - count; j++) {
+      var diagonale = [];
+      for (var k = 0; k < count; k++) {
+        diagonale.push(this.grid[i + k][j + k]);
+      }
+      if (diagonale.every((cell) => cell.card?.color == color)) {
+        console.log(
+          `Il y a une diagonale de ${count} cartes identiques de ${diagonale[0]} dans la grille !`
+        );
+        return true;
+      }
     }
   }
-  if (i >= count) {
-    return true;
-  }
-  i = 0;
-  for (let j = 0; j < this.grid.length; j++) {
-    if (
-      !this.grid[j][this.grid.length - 1 - j].empty &&
-      this.grid[j][this.grid.length - 1 - j].card.color === color
-    ) {
-      i++;
+
+  for (var i = count - 1; i < tailleGrille; i++) {
+    for (var j = 0; j <= tailleGrille - count; j++) {
+      var diagonale = [];
+      for (var k = 0; k < count; k++) {
+        diagonale.push(this.grid[i - k][j + k]);
+      }
+      if (diagonale.every((cell) => cell.card?.color == color)) {
+        console.log(
+          `Il y a une diagonale de ${count} cartes identiques de ${diagonale[0]} dans la grille !`
+        );
+        return true;
+      }
     }
   }
-  if (i >= count) {
-    return true;
-  }
+
+  // Si aucune diagonale n'a été trouvée, retourne false
   return false;
 };
 

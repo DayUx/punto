@@ -4,6 +4,7 @@ function User(id, username, colors) {
   this.id = id;
   this.username = username;
   this.cards = [];
+  this.win = false;
   this.colors = colors;
 }
 

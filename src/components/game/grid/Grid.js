@@ -1,31 +1,22 @@
 import "./Grid.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Card from "../card/Card";
 
-const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
-  console.log(grid);
-
+const Grid = ({ onCardDrop = function () {}, grid = [], endOfGame }) => {
   const [zoom, setZoom] = useState(1);
 
   function onDrop(column, rowIndex, columnIndex) {
     return function (e) {
       e.target.classList.remove("hovered");
       if (column.placable && !e.target.classList.contains("filled")) {
-        const card = document.getElementById(e.dataTransfer.getData("id"));
         onCardDrop(e.dataTransfer.getData("id"), rowIndex, columnIndex);
       }
     };
   }
-
-  useEffect(() => {
-    console.log(grid);
-  }, [grid]);
-
   return (
     <div
       onWheel={function (e) {
         e.stopPropagation();
-        console.log(e.deltaY);
         setZoom((zoom) => {
           if (zoom > 0.5 && zoom < 2.5) {
             if (e.deltaY < 0) {
@@ -70,7 +61,7 @@ const Grid = ({ onCardDrop = function () {}, grid = [] }) => {
                       height: `calc(var(--grid-width) / ${grid.length})`,
                     }}
                     className={`cell row-${rowIndex} column-${columnIndex} ${
-                      column.placable ? "placable" : ""
+                      column.placable && !endOfGame ? "placable" : ""
                     }`}
                     onDragOver={function (e) {
                       e.target.classList.add("hovered");

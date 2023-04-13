@@ -61,11 +61,15 @@ const Header = () => {
                   </Button>
                 </li>
                 <li>
-                  <Button> Scores </Button>
+                  <Button
+                    onClick={() => {
+                      navigate("/historique");
+                    }}
+                  >
+                    Historique
+                  </Button>
                 </li>
-                <li>
-                  <Button> Aide </Button>
-                </li>
+
                 <li>
                   <IconButton
                     color={"#f00"}

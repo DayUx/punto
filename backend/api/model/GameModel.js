@@ -20,6 +20,10 @@ const gameSchema = new mongoose.Schema({
     type: "boolean",
     required: true,
   },
+  date: {
+    type: "date",
+    required: true,
+  },
 
   players: [
     {

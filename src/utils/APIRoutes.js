@@ -7,4 +7,6 @@ export const APIRoutes = {
   joinGame: `${url}/joinGame`,
   getGames: `${url}/getGames`,
   playGame: `${url}/playGame`,
+  getHistorique: `${url}/historique`,
+  getStatistics: `${url}/statistiques`,
 };

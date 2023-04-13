@@ -6,7 +6,9 @@ import { APIRoutes } from "../../../utils/APIRoutes";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  //utilisation de la fonction navigate de react-router-dom pour rediriger l'utilisateur
   const navigate = useNavigate();
+  //champs du formulaire
   const [fields, setFields] = useState({
     username: "",
     password: "",
@@ -14,6 +16,7 @@ const Register = () => {
     email: "",
   });
 
+  //fonction qui permet de mettre à jour les champs du formulaire
   const changeHandler = (e) => {
     const { name, value } = e.target;
     setFields((fields) => ({
@@ -22,6 +25,7 @@ const Register = () => {
     }));
   };
 
+  //fonction qui permet de soumettre le formulaire
   const handleSubmit = (e) => {
     e.preventDefault();
     const loading = toast.loading("Loading...");

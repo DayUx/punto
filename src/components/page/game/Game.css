@@ -16,6 +16,9 @@
   font-size: 30px;
   margin-bottom: 20px;
 }
+.winner {
+  font-size: 50px;
+}
 
 .ennemies {
   display: flex;

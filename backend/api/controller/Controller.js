@@ -93,6 +93,7 @@ module.exports.newGame = async (req, res, next) => {
       numberPlayers: numberPlayers,
       grid: grid,
       end: false,
+      date: new Date(),
       aborted: false,
       players: [],
     });
@@ -103,6 +104,71 @@ module.exports.newGame = async (req, res, next) => {
     next(e);
   }
 };
+
+module.exports.getHistorique = async (req, res, next) => {
+  try {
+    const token = req.headers["x-access-token"];
+    const userJson = jwt.verify(token, process.env.JWT_SECRET);
+    const games = await Game.find({
+      $and: [{ "players.user_id": userJson.id }, { end: true }],
+    }).sort({
+      date: -1,
+    });
+    return res.status(200).json({ games: games });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports.getStatistics = async (req, res, next) => {
+  try {
+    const token = req.headers["x-access-token"];
+
+    const userJson = jwt.verify(token, process.env.JWT_SECRET);
+    const games = await Game.aggregate([
+      {
+        $match: {
+          "players.user_id": userJson.id,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          gamesPlayed: { $size: "$players" },
+          gamesWon: {
+            $size: {
+              $filter: {
+                input: "$players",
+                as: "player",
+                cond: {
+                  $and: [
+                    { $eq: ["$$player.user_id", userJson.id] },
+                    { $eq: ["$$player.win", true] },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          winRatio: {
+            $cond: {
+              if: { $eq: ["$gamesPlayed", 0] },
+              then: 0,
+              else: { $divide: ["$gamesWon", "$gamesPlayed"] },
+            },
+          },
+        },
+      },
+    ]);
+    return res.status(200).json(games);
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports.joinGame = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
@@ -150,7 +216,12 @@ module.exports.joinGame = async (req, res, next) => {
         return res.status(200).json({ game: game });
       }
       Debug("GAME UPDATE", game._id.toString());
-      global.io.to("gamelist").emit("updateGameList", game);
+      global.io.to("gamelist").emit("updateGameList", {
+        _id: game._id,
+        numPlayers: game.players.length,
+        name: game.name,
+        maxPlayers: game.maxPlayers,
+      });
       global.io.to(game._id.toString()).emit("updateGame", game);
     }
 
@@ -163,7 +234,9 @@ module.exports.joinGame = async (req, res, next) => {
 
 function timeout(game) {
   return new Promise((resolve) => {
-    global.io.to(game._id.toString()).emit("loading", "ALL PLAYERS READY");
+    global.io
+      .to(game._id.toString())
+      .emit("loading", "TOUS LES JOUEURS SONT PRÊT");
     setTimeout(() => {
       global.io.to(game._id.toString()).emit("loading", "3");
       setTimeout(() => {
@@ -171,10 +244,7 @@ function timeout(game) {
         setTimeout(() => {
           global.io.to(game._id.toString()).emit("loading", "1");
           setTimeout(() => {
-            global.io.to(game._id.toString()).emit("loading", "FIGHT !!!");
-            setTimeout(() => {
-              resolve();
-            }, 1000);
+            resolve();
           }, 1000);
         }, 1000);
       }, 1000);
@@ -186,11 +256,25 @@ module.exports.getGames = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
     jwt.verify(token, process.env.JWT_SECRET);
-    const games = await Game.find({
-      $where: function () {
-        return this.players.length < this.maxPlayers;
+    const games = await Game.aggregate([
+      {
+        $match: {
+          end: false,
+          aborted: false,
+          $expr: { $lt: [{ $size: "$players" }, "$maxPlayers"] },
+        },
       },
-    });
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          maxPlayers: 1,
+          players: 1,
+          numPlayers: { $size: "$players" },
+        },
+      },
+      { $sort: { players: -1 } },
+    ]);
     return res.status(200).json({ games: games });
   } catch (e) {
     res.status(401).json({ message: "Token is invalid, please reconnect" });

@@ -1,3 +1,4 @@
+// importation des modules nécessaires pour la page Home
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GameListItem from "../../base/gameListItem/GameListItem";
@@ -9,41 +10,56 @@ import { APIRoutes } from "../../../utils/APIRoutes";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 
+// création du composant Home
 const Home = () => {
+  // utilisation de useNavigate pour naviguer entre les différentes pages
   const navigate = useNavigate();
+  // state contenant la liste des parties en attente de joueurs
   const [games, setGames] = useState([]);
+  // state pour la mise à jour d'une partie
   const [arrivalUpdate, setArrivalUpdate] = useState();
+  // state pour la suppression d'une partie
   const [removedGame, setRemovedGame] = useState();
 
+  // utilisation de useEffect pour mettre à jour la partie en cours
   useEffect(() => {
     arrivalUpdate && updateGame(arrivalUpdate);
   }, [arrivalUpdate]);
+
+  // utilisation de useEffect pour supprimer une partie en cours
   useEffect(() => {
     removedGame && removeGame(arrivalUpdate);
   }, [removedGame]);
 
+  // utilisation de useRef pour initialiser l'objet socket
   const socket = useRef();
 
+  // fonction pour décoder le token JWT
   const wt_decode = (token) => {
     var base64Url = token.split(".")[1];
     var base64 = base64Url.replace("-", "+").replace("_", "/");
     return JSON.parse(window.atob(base64));
   };
 
+  // state contenant les informations nécessaires pour créer une nouvelle partie
   const [fields, setFields] = useState({
     name: "",
     maxPlayers: 2,
   });
 
+  // utilisation de useEffect pour récupérer la liste des parties en cours
   useEffect(() => {
+    // affichage d'un toast de chargement
     toast.dismiss();
     if (!localStorage.getItem("user")) {
-      socket.current.removeAllListeners();
+      socket.current?.removeAllListeners();
       navigate("/login");
     }
+    // récupération de la liste des parties en cours
     getGames();
   }, []);
 
+  // fonction pour récupérer la liste des parties en cours
   const getGames = () => {
     fetch(APIRoutes.getGames, {
       method: "POST",
@@ -55,17 +71,19 @@ const Home = () => {
       const ok = response.ok;
       response.json().then((data) => {
         if (ok) {
+          // mise à jour de la liste des parties en cours
           setGames(data.games);
+          // initialisation de l'objet socket
           socket.current = io(APIRoutes.host);
-
+          // écoute de l'événement "updateGameList" pour mettre à jour une partie en cours
           socket.current.on("updateGameList", (data) => {
-            console.log("updateGameList", data);
             setArrivalUpdate(data);
           });
+          // écoute de l'événement "removeGame" pour supprimer une partie en cours
           socket.current.on("removeGame", (data) => {
-            console.log("removeGame", data);
             setRemovedGame(data);
           });
+          // envoi d'un message "gamelist" avec le token JWT pour se connecter au serveur de WebSocket
           socket.current.emit("gamelist", {
             token: localStorage.getItem("user"),
           });
@@ -73,7 +91,7 @@ const Home = () => {
           toast.error(data.message);
           if (response.status === 401) {
             localStorage.removeItem("user");
-            socket.current.removeAllListeners();
+            socket.current?.removeAllListeners();
             navigate("/login");
           }
         }
@@ -81,6 +99,7 @@ const Home = () => {
     });
   };
 
+  // fonction pour mettre à jour une partie en attente de joueurs
   const updateGame = (game) => {
     const index = games.findIndex((g) => g._id === game._id);
     if (index !== -1) {
@@ -91,18 +110,17 @@ const Home = () => {
       setGames((oldGames) => [...oldGames, game]);
     }
   };
+  // fonction pour supprimer une partie en attente de joueurs
 
   const removeGame = (game) => {
     const index = games.findIndex((g) => g._id === game._id);
-    console.log(index);
-    console.log(games);
     if (index !== -1) {
       const newGames = [...games];
       newGames.splice(index, 1);
-      console.log(newGames);
       setGames(newGames);
     }
   };
+  // fonction pour créer une nouvelle partie
 
   const createNewGame = () => {
     fetch(APIRoutes.newGame, {
@@ -140,7 +158,7 @@ const Home = () => {
                   <GameListItem
                     key={index}
                     opaque={index % 2 === 0}
-                    numberPlayers={game.players.length}
+                    numberPlayers={game.numPlayers}
                     maxPlayers={game.maxPlayers}
                     name={game.name}
                     id={game._id}

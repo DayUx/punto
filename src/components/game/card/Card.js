@@ -1,18 +1,12 @@
 import "./Card.css";
-import { createRef, forwardRef, useImperativeHandle } from "react";
+import { createRef, forwardRef } from "react";
 import Logo from "../../base/logo/Logo";
 
 const Card = forwardRef(
   ({ color, value, id, disable, size = 50, blinking = false }, ref) => {
     const cardRef = createRef();
-
-    useImperativeHandle(ref, () => ({
-      turnCard: () => {
-        cardRef.current.classList.toggle("turned");
-      },
-    }));
-
-    const diceFace = {
+    // pattern pour les differentes valeurs de carte
+    const cardPattern = {
       1: [
         [0, 0, 0],
         [0, 1, 0],
@@ -59,15 +53,6 @@ const Card = forwardRef(
         [1, 1, 1],
       ],
     };
-
-    const turnCard = () => {
-      cardRef.current.classList.toggle("turned");
-    };
-
-    const onDragEnter = (e, position) => {
-      console.log(e.target.innerhtml);
-    };
-
     const isColorValid = (color) => {
       return (
         color === "rouge" ||
@@ -107,7 +92,7 @@ const Card = forwardRef(
         <div className={"content"}>
           <div className={"front"}>
             {value && isColorValid(color) ? (
-              diceFace[value].map((row, rowIndex) => {
+              cardPattern[value].map((row) => {
                 return (
                   <>
                     {row.map((cell, cellIndex) => {

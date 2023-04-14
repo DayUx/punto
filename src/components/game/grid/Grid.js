@@ -8,7 +8,7 @@ const Grid = ({ onCardDrop = function () {}, grid = [], endOfGame }) => {
   function onDrop(column, rowIndex, columnIndex) {
     return function (e) {
       e.target.classList.remove("hovered");
-      if (column.placable && !e.target.classList.contains("filled")) {
+      if (column.placable) {
         onCardDrop(e.dataTransfer.getData("id"), rowIndex, columnIndex);
       }
     };

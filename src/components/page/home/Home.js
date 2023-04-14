@@ -20,6 +20,11 @@ const Home = () => {
   const [arrivalUpdate, setArrivalUpdate] = useState();
   // state pour la suppression d'une partie
   const [removedGame, setRemovedGame] = useState();
+  // state contenu le meilleur et le pire joueur
+  const [bestAndWorst, setBestAndWorst] = useState({
+    playerWithMostWins: null,
+    playerWithMostLosses: null,
+  });
 
   // utilisation de useEffect pour mettre à jour la partie en cours
   useEffect(() => {
@@ -36,8 +41,8 @@ const Home = () => {
 
   // fonction pour décoder le token JWT
   const wt_decode = (token) => {
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace("-", "+").replace("_", "/");
+    let base64Url = token.split(".")[1];
+    let base64 = base64Url.replace("-", "+").replace("_", "/");
     return JSON.parse(window.atob(base64));
   };
 
@@ -49,6 +54,21 @@ const Home = () => {
 
   // utilisation de useEffect pour récupérer la liste des parties en cours
   useEffect(() => {
+    fetch(APIRoutes.getBestAndWorst, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("user"),
+      },
+    }).then((response) => {
+      const ok = response.ok;
+      response.json().then((data) => {
+        if (ok) {
+          setBestAndWorst(data);
+        }
+      });
+    });
+
     // affichage d'un toast de chargement
     toast.dismiss();
     if (!localStorage.getItem("user")) {
@@ -196,6 +216,16 @@ const Home = () => {
           <IconButton color={"#0f0"} onClick={createNewGame}>
             <MdAdd size={25} />
           </IconButton>
+        </div>
+        <div className={"stats"}>
+          <div className={"stat"}>
+            <h2>Meilleur joueur</h2>
+            <h3>{bestAndWorst.playerWithMostWins?.username}</h3>
+          </div>
+          <div className={"stat"}>
+            <h2>Pire joueur</h2>
+            <h3>{bestAndWorst.playerWithMostLosses?.username}</h3>
+          </div>
         </div>
       </div>
     </div>

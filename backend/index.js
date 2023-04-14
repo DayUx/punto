@@ -45,8 +45,6 @@ io.on("connection", (socket) => {
       const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
       if (decoded) {
         socket.join("gamelist");
-
-        console.log(`${decoded.username} joined gamelist`);
       }
     } catch (e) {}
   });
@@ -55,7 +53,6 @@ io.on("connection", (socket) => {
     try {
       const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
       if (decoded) {
-        console.log(`${decoded.username} joined ${data.gameId}`);
         socket.join(data.gameId);
       }
     } catch (e) {}
@@ -67,7 +64,6 @@ io.on("connection", (socket) => {
         if (global.games[data.id]) {
           socket.join(data.id);
           socket.join(decoded.id);
-          console.log(`${decoded.username} play ${data.id}`);
           global.games[data.id].setUserOk(decoded.id);
         }
       }
@@ -75,7 +71,6 @@ io.on("connection", (socket) => {
   });
   socket.on("placeCard", async (data) => {
     try {
-      // console.log("placeCard", data);
       const decoded = jwt.verify(data.token, process.env.JWT_SECRET);
       if (decoded) {
         if (global.games[data.gameId]) {

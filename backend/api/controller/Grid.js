@@ -1,11 +1,8 @@
-const Debug = require("./Debug");
-
 function Grid(grid) {
   this.grid = grid;
 }
 Grid.prototype.placeCard = function (card, x, y) {
-  Debug("placeCard : ", card, x, y);
-  if (this.grid[x][y].empty || this.grid[x][y].card.value < card.value) {
+  if (this.grid[x][y].placable) {
     this.grid[x][y].card = card;
     this.grid[x][y].empty = false;
     return true;
@@ -13,22 +10,12 @@ Grid.prototype.placeCard = function (card, x, y) {
   return false;
 };
 
-Grid.prototype.resetPlacable = function () {
-  for (const row of this.grid) {
-    for (const column of row) {
-      column.placable = false;
-    }
-  }
-};
-Grid.prototype.setPlacable = function (color) {
-  Debug("setPlacable");
+Grid.prototype.setPlacable = function (value) {
   this.bounds = this.getBounds();
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     for (let rowIndex = 0; rowIndex < this.grid.length; rowIndex++) {
       for (let columnIndex = 0; columnIndex < this.grid.length; columnIndex++) {
-        const cell = this.grid[rowIndex][columnIndex];
-        cell.placable = false;
-        this.setPlacableAroundCell(columnIndex, rowIndex, color);
+        this.setPlacableAroundCell(columnIndex, rowIndex, value);
       }
     }
     resolve();
@@ -81,19 +68,16 @@ Grid.prototype.isThereCardAround = function (x, y) {
   if (y < this.grid.length - 1 && x > 0 && !this.grid[y + 1][x - 1].empty) {
     return true;
   }
-  if (
+  return (
     y < this.grid.length - 1 &&
     x < this.grid.length - 1 &&
     !this.grid[y + 1][x + 1].empty
-  ) {
-    return true;
-  }
-
-  return false;
+  );
 };
 
-Grid.prototype.setPlacableAroundCell = function (x, y, color) {
-  if (!this.grid[y][x].empty) {
+Grid.prototype.setPlacableAroundCell = function (x, y, value) {
+  if (this.grid[y][x].card) {
+    this.grid[y][x].placable = this.grid[y][x].card.value < value;
     return;
   }
   const isThereCardAround = this.isThereCardAround(x, y);
@@ -108,14 +92,10 @@ Grid.prototype.setPlacableAroundCell = function (x, y, color) {
       isPlacable = false;
     }
   }
-  if (isThereCardAround && isPlacable) {
-    this.grid[y][x].placable = true;
-  }
+  this.grid[y][x].placable = isThereCardAround && isPlacable;
 };
 
 Grid.prototype.doesUserWin = function (user, count) {
-  console.log("doesUserWin", count);
-
   let win = false;
   for (const color of user.colors) {
     win =
@@ -124,17 +104,11 @@ Grid.prototype.doesUserWin = function (user, count) {
       this.isThereAColumnOf(color, count) ||
       this.isThereADiagonalOf(color, count);
   }
-
-  if (win) {
-    user.win = true;
-    console.log(user.username, "a gagné !!!!!!");
-  }
-
+  user.win = win;
   return win;
 };
 
 Grid.prototype.isThereARowOf = function (color, count) {
-  Debug("isThereARowOf", color, count);
   for (let i = 0; i < this.grid.length; i++) {
     let x = 0;
     for (let j = 0; j < this.grid.length; j++) {
@@ -153,7 +127,6 @@ Grid.prototype.isThereARowOf = function (color, count) {
   return false;
 };
 Grid.prototype.isThereAColumnOf = function (color, count) {
-  Debug("isThereAColumnOf", color, count);
   for (let i = 0; i < this.grid.length; i++) {
     let x = 0;
     for (let j = 0; j < this.grid.length; j++) {
@@ -172,33 +145,27 @@ Grid.prototype.isThereAColumnOf = function (color, count) {
   return false;
 };
 Grid.prototype.isThereADiagonalOf = function (color, count) {
-  var tailleGrille = this.grid.length;
+  let tailleGrille = this.grid.length;
 
-  for (var i = 0; i <= tailleGrille - count; i++) {
-    for (var j = 0; j <= tailleGrille - count; j++) {
-      var diagonale = [];
-      for (var k = 0; k < count; k++) {
+  for (let i = 0; i <= tailleGrille - count; i++) {
+    for (let j = 0; j <= tailleGrille - count; j++) {
+      let diagonale = [];
+      for (let k = 0; k < count; k++) {
         diagonale.push(this.grid[i + k][j + k]);
       }
-      if (diagonale.every((cell) => cell.card?.color == color)) {
-        console.log(
-          `Il y a une diagonale de ${count} cartes identiques de ${diagonale[0]} dans la grille !`
-        );
+      if (diagonale.every((cell) => cell.card?.color === color)) {
         return true;
       }
     }
   }
 
-  for (var i = count - 1; i < tailleGrille; i++) {
-    for (var j = 0; j <= tailleGrille - count; j++) {
-      var diagonale = [];
-      for (var k = 0; k < count; k++) {
+  for (let i = count - 1; i < tailleGrille; i++) {
+    for (let j = 0; j <= tailleGrille - count; j++) {
+      let diagonale = [];
+      for (let k = 0; k < count; k++) {
         diagonale.push(this.grid[i - k][j + k]);
       }
-      if (diagonale.every((cell) => cell.card?.color == color)) {
-        console.log(
-          `Il y a une diagonale de ${count} cartes identiques de ${diagonale[0]} dans la grille !`
-        );
+      if (diagonale.every((cell) => cell.card?.color === color)) {
         return true;
       }
     }

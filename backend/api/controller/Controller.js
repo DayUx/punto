@@ -3,7 +3,6 @@ const Game = require("../model/GameModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const GameClass = require("./GameClass");
-const Debug = require("./Debug");
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -81,12 +80,10 @@ module.exports.register = async (req, res, next) => {
 module.exports.newGame = async (req, res, next) => {
   try {
     const { name, maxPlayers, numberPlayers } = req.body;
-
     const grid = Array(11)
       .fill()
       .map(() => Array(11).fill({ empty: true }));
     grid[5][5] = { empty: true, placable: true };
-
     const game = await Game.create({
       name: name,
       maxPlayers: maxPlayers,
@@ -97,7 +94,6 @@ module.exports.newGame = async (req, res, next) => {
       aborted: false,
       players: [],
     });
-    Debug("GAME UPDATE");
     global.io.sockets.emit("updateGame", game);
     return res.status(200).json({ game: game });
   } catch (e) {
@@ -120,59 +116,9 @@ module.exports.getHistorique = async (req, res, next) => {
   }
 };
 
-module.exports.getStatistics = async (req, res, next) => {
-  try {
-    const token = req.headers["x-access-token"];
-
-    const userJson = jwt.verify(token, process.env.JWT_SECRET);
-    const games = await Game.aggregate([
-      {
-        $match: {
-          "players.user_id": userJson.id,
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          gamesPlayed: { $size: "$players" },
-          gamesWon: {
-            $size: {
-              $filter: {
-                input: "$players",
-                as: "player",
-                cond: {
-                  $and: [
-                    { $eq: ["$$player.user_id", userJson.id] },
-                    { $eq: ["$$player.win", true] },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
-          winRatio: {
-            $cond: {
-              if: { $eq: ["$gamesPlayed", 0] },
-              then: 0,
-              else: { $divide: ["$gamesWon", "$gamesPlayed"] },
-            },
-          },
-        },
-      },
-    ]);
-    return res.status(200).json(games);
-  } catch (e) {
-    next(e);
-  }
-};
-
 module.exports.joinGame = async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"];
-    // Debug("JOIN GAME", token);
     const userJson = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = req.body;
     const game = await Game.findOne({ _id: id });
@@ -211,11 +157,9 @@ module.exports.joinGame = async (req, res, next) => {
           global.io.to(game._id.toString()).emit("startGame", game);
           global.io.sockets.emit("removeGame", game);
           global.games[game._id.toString()] = new GameClass(game);
-          Debug("GAME START", game._id.toString());
         });
         return res.status(200).json({ game: game });
       }
-      Debug("GAME UPDATE", game._id.toString());
       global.io.to("gamelist").emit("updateGameList", {
         _id: game._id,
         numPlayers: game.players.length,
@@ -251,6 +195,18 @@ function timeout(game) {
     }, 1000);
   }, 1000);
 }
+
+module.exports.getBestAndWorst = async (req, res, next) => {
+  const playerWithMostWins = await Game.getPlayerWithMostWins();
+  const playerWithMostLosses = await Game.getPlayerWithMostLosses();
+  console.log("Joueur avec le plus de victoires : ", playerWithMostWins);
+  console.log("Joueur avec le plus de défaites : ", playerWithMostLosses);
+
+  return res.status(200).json({
+    playerWithMostWins: playerWithMostWins,
+    playerWithMostLosses: playerWithMostLosses,
+  });
+};
 
 module.exports.getGames = async (req, res, next) => {
   try {

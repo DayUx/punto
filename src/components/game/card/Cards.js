@@ -5,7 +5,6 @@ const Cards = ({ cards = [], disable }) => {
   return (
     <div className="cards">
       {cards.map((card, index) => {
-        console.log("refreshCards", cards);
         return (
           <div
             className={`cards-card ${disable ? " disable" : ""}`}

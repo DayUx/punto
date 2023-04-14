@@ -43,4 +43,36 @@ const gameSchema = new mongoose.Schema({
   ],
 });
 
+gameSchema.statics.getPlayerWithMostLosses = async function () {
+  const result = await this.aggregate([
+    { $unwind: "$players" },
+    {
+      $group: {
+        _id: "$players.user_id",
+        username: { $first: "$players.username" },
+        totalLosses: { $sum: { $cond: ["$players.win", 0, 1] } },
+      },
+    },
+    { $sort: { totalLosses: -1 } },
+    { $limit: 1 },
+  ]);
+  return result[0];
+};
+
+gameSchema.statics.getPlayerWithMostWins = async function () {
+  const result = await this.aggregate([
+    { $unwind: "$players" },
+    {
+      $group: {
+        _id: "$players.user_id",
+        username: { $first: "$players.username" },
+        totalWins: { $sum: { $cond: ["$players.win", 1, 0] } },
+      },
+    },
+    { $sort: { totalWins: -1 } },
+    { $limit: 1 },
+  ]);
+  return result[0];
+};
+
 module.exports = mongoose.model("games", gameSchema);

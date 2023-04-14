@@ -8,5 +8,5 @@ export const APIRoutes = {
   getGames: `${url}/getGames`,
   playGame: `${url}/playGame`,
   getHistorique: `${url}/historique`,
-  getStatistics: `${url}/statistiques`,
+  getBestAndWorst: `${url}/getBestAndWorst`,
 };

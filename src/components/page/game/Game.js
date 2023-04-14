@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APIRoutes } from "../../../utils/APIRoutes";
-import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import Grid from "../../game/grid/Grid";
-import Card from "../../game/card/Card";
-import Cards from "../../game/card/Cards";
 
 import "./Game.css";
 import Player from "../../base/player/Player";
@@ -54,8 +51,8 @@ const Game = () => {
   }, []);
   // Fonction pour décoder le token
   const wt_decode = (token) => {
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace("-", "+").replace("_", "/");
+    let base64Url = token.split(".")[1];
+    let base64 = base64Url.replace("-", "+").replace("_", "/");
     return JSON.parse(window.atob(base64));
   };
   // Fonction pour ordonner les joueurs

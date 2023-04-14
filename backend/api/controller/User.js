@@ -1,5 +1,3 @@
-const Debug = require("./Debug");
-
 function User(id, username, colors) {
   this.id = id;
   this.username = username;
@@ -10,7 +8,6 @@ function User(id, username, colors) {
 
 User.prototype.setUserOk = function () {
   this.ok = true;
-  Debug(this.id + " is ready");
 };
 
 User.prototype.addCard = function (card) {
@@ -18,13 +15,11 @@ User.prototype.addCard = function (card) {
 };
 
 User.prototype.removeCard = function (id) {
-  Debug("removeCard", id);
   this.cards = this.cards.filter((c) => c.id !== id);
 };
 
 User.prototype.pickNextCard = function () {
-  Debug("pickNextCard");
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let card = this.cards[0];
     this.removeCard(card.id);
     this.currentCard = card;
@@ -33,16 +28,14 @@ User.prototype.pickNextCard = function () {
 };
 
 User.prototype.shuffleCards = function () {
-  Debug("shuffleCards");
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     this.cards = this.cards.sort(() => Math.random() - 0.5);
     resolve();
   });
 };
 
 User.prototype.getCard = async function (id) {
-  Debug("getCard", id);
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     this.cards.forEach((c) => {
       if (c.id === id) {
         resolve(c);
